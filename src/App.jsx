@@ -17,6 +17,8 @@ function App() {
 
     <Routes>
       <Route  path="/" element={<Home sideNavbar={sideNavbar} />}/>
+      <Route path="/login" element={<Login />}/>
+      <Route path="/register" element={<Registration />}/>
     </Routes>
 
     </BrowserRouter>
