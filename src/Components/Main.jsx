@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Link } from "react-router-dom";
 
 function Main({ fullNav }) {
@@ -29,7 +30,8 @@ function Main({ fullNav }) {
     },
     {
       id: 2,
-      thumbnail: "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
       duration: "10:20",
       avatar: "https://via.placeholder.com/40",
       title: "Another Interesting Video on Technology Trends",
@@ -39,7 +41,8 @@ function Main({ fullNav }) {
     },
     {
       id: 3,
-      thumbnail: "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
       duration: "7:45",
       avatar: "https://via.placeholder.com/40",
       title: "Frontend Dev Tools You Should Know",
@@ -49,7 +52,8 @@ function Main({ fullNav }) {
     },
     {
       id: 4,
-      thumbnail: "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
+      thumbnail:
+        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
       duration: "9:10",
       avatar: "https://via.placeholder.com/40",
       title: "Mastering JavaScript in 20 Minutes",
@@ -60,7 +64,7 @@ function Main({ fullNav }) {
   ];
 
   return (
-    <div className="flex flex-col overflow-x-hidden w-full bg-black">
+    <div className="flex flex-col overflow-x-hidden w-full bg-black min-h-screen">
       {/* Filter Bar */}
       <div
         className={`fixed top-16 ${
@@ -68,9 +72,9 @@ function Main({ fullNav }) {
         } right-0 z-10 bg-gray-800 text-white px-4 py-2 overflow-x-auto whitespace-nowrap shadow scrollbar-hide`}
       >
         <div className="flex space-x-4 scroll-smooth">
-          {options.map((option, index) => (
+          {options.map((option) => (
             <button
-              key={index}
+              key={option}
               className="px-4 py-1 bg-gray-700 hover:bg-gray-800 rounded-2xl text-sm transition-colors"
             >
               {option}
@@ -82,18 +86,20 @@ function Main({ fullNav }) {
       {/* Video Grid */}
       <div
         className={`mt-24 p-4 grid gap-6 ${
-          fullNav ? "ml-60 lg:grid-cols-3" : "ml-16 lg:grid-cols-4"
-        } grid-cols-1 sm:grid-cols-2 md:grid-cols-3 `}
+          fullNav ? "ml-60 lg:grid-cols-4" : "ml-16 lg:grid-cols-5"
+        } grid-cols-1 sm:grid-cols-2 md:grid-cols-3`}
       >
         {videoData.map((video) => (
           <div key={video.id} className="text-white">
             {/* Thumbnail */}
-            <Link to={'/watch/1'} className="relative w-full h-48">
+            <Link to={`/watch/${video.id}`} className="relative w-full h-48 block">
               <img
                 src={video.thumbnail}
-                alt="Video Thumbnail"
+                alt={`Thumbnail of ${video.title}`}
                 className="w-full h-full object-cover rounded-lg"
-                onError={(e) => (e.target.src = "/fallback-thumbnail.jpg")}
+                onError={(e) =>
+                  (e.target.src = "https://via.placeholder.com/480x270?text=No+Image")
+                }
               />
               <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 px-2 py-0.5 text-xs rounded">
                 {video.duration}
@@ -104,7 +110,7 @@ function Main({ fullNav }) {
             <div className="flex mt-3 gap-3">
               <img
                 src={video.avatar}
-                alt="Channel Avatar"
+                alt={`Avatar of ${video.channel}`}
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div className="flex flex-col">
@@ -124,5 +130,7 @@ function Main({ fullNav }) {
     </div>
   );
 }
+
+
 
 export default Main;
