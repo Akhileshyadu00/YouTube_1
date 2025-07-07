@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Registration() {
   const [formData, setFormData] = useState({
-    username: "",
+    userName: "",
     email: "",
     password: "",
     channelName: "",
+    about: "",
     profileImage: null,
   });
 
@@ -19,8 +22,7 @@ function Registration() {
       const file = files[0];
 
       if (file && file.size > 2 * 1024 * 1024) {
-        // 2MB size limit
-        alert("Profile image must be under 2MB.");
+        toast.error("Profile image must be under 2MB.");
         return;
       }
 
@@ -43,11 +45,14 @@ function Registration() {
     };
   }, [previewImage]);
 
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     let imageUrl = "";
 
+    // 1. Upload profile image to Cloudinary
     if (formData.profileImage) {
       const imageData = new FormData();
       imageData.append("file", formData.profileImage);
@@ -59,31 +64,45 @@ function Registration() {
           imageData
         );
         imageUrl = uploadResponse.data.secure_url;
-        console.log("Uploaded image URL:", imageUrl);
       } catch (err) {
         console.error("Image upload failed:", err);
+        toast.error("Failed to upload profile image.");
         return;
       }
     }
 
+    // 2. Prepare and send user data to backend
     const userData = {
-      username: formData.username,
+      userName: formData.userName,
       email: formData.email,
       password: formData.password,
       channelName: formData.channelName,
-      profileImageUrl: imageUrl,
+      profilePic: imageUrl,
+      about: formData.about,
     };
-
-    console.log("Submitting user data:", userData);
 
     try {
       const res = await axios.post(
-        "https://your-backend.com/api/register",
+        "http://localhost:4001/api/users/register",
         userData
       );
-      console.log("User registered successfully:", res.data);
+
+      console.log("Registration response:", res.data);
+      toast.success("Registration successful!");
+
+      // Reset form
+      setFormData({
+        userName: "",
+        email: "",
+        password: "",
+        channelName: "",
+        about: "",
+        profileImage: null,
+      });
+      setPreviewImage(null);
     } catch (err) {
       console.error("User registration failed:", err);
+      toast.error("Registration failed. Please try again.");
     }
   };
 
@@ -96,21 +115,23 @@ function Registration() {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
+        {/* Username */}
         <div className="mb-4">
-          <label htmlFor="username" className="block mb-1">
+          <label htmlFor="userName" className="block mb-1">
             Username
           </label>
           <input
-            id="username"
+            id="userName"
             type="text"
-            name="username"
-            value={formData.username}
+            name="userName"
+            value={formData.userName}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
             required
+            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
 
+        {/* Email */}
         <div className="mb-4">
           <label htmlFor="email" className="block mb-1">
             Email
@@ -121,11 +142,12 @@ function Registration() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
             required
+            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
 
+        {/* Password */}
         <div className="mb-4">
           <label htmlFor="password" className="block mb-1">
             Password
@@ -136,11 +158,12 @@ function Registration() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
             required
+            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
 
+        {/* Channel Name */}
         <div className="mb-4">
           <label htmlFor="channelName" className="block mb-1">
             Channel Name
@@ -151,11 +174,28 @@ function Registration() {
             name="channelName"
             value={formData.channelName}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
             required
+            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
 
+        {/* About */}
+        <div className="mb-4">
+          <label htmlFor="about" className="block mb-1">
+            About
+          </label>
+          <input
+            id="about"
+            type="text"
+            name="about"
+            value={formData.about}
+            onChange={handleChange}
+            required
+            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
+          />
+        </div>
+
+        {/* Profile Image Upload */}
         <div className="mb-6">
           <label htmlFor="profileImage" className="block mb-1">
             Profile Image
@@ -179,6 +219,7 @@ function Registration() {
           )}
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold transition"
@@ -186,6 +227,8 @@ function Registration() {
           Register
         </button>
       </form>
+
+      <ToastContainer position="bottom-right" />
     </div>
   );
 }
