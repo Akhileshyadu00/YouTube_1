@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 function Registration() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ function Registration() {
   });
 
   const [previewImage, setPreviewImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -45,10 +48,23 @@ function Registration() {
     };
   }, [previewImage]);
 
-
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    const { userName, email, password, channelName, about } = formData;
+
+    if (!userName || !email || !password || !channelName || !about) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
 
     let imageUrl = "";
 
@@ -67,18 +83,19 @@ function Registration() {
       } catch (err) {
         console.error("Image upload failed:", err);
         toast.error("Failed to upload profile image.");
+        setLoading(false);
         return;
       }
     }
 
     // 2. Prepare and send user data to backend
     const userData = {
-      userName: formData.userName,
-      email: formData.email,
-      password: formData.password,
-      channelName: formData.channelName,
+      userName,
+      email,
+      password,
+      channelName,
       profilePic: imageUrl,
-      about: formData.about,
+      about,
     };
 
     try {
@@ -100,9 +117,15 @@ function Registration() {
         profileImage: null,
       });
       setPreviewImage(null);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500); // small delay to show toast
     } catch (err) {
       console.error("User registration failed:", err);
       toast.error("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,7 +133,7 @@ function Registration() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-sm"
+        className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-lg"
         encType="multipart/form-data"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
@@ -222,9 +245,10 @@ function Registration() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold transition"
+          className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold transition disabled:opacity-50"
+          disabled={loading}
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </button>
       </form>
 

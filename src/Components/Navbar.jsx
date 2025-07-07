@@ -6,13 +6,10 @@ import { IoMenu, IoLogoYoutube } from "react-icons/io5";
 import { TfiPlus } from "react-icons/tfi";
 import { IoIosNotifications } from "react-icons/io";
 
-
 function Navbar({ setSideNavbarfunc, sideNavbar }) {
-  const [userPic] = useState(
-    "https://t4.ftcdn.net/jpg/07/88/67/21/360_F_788672190_maGwfDtey1ep9BqZsLO9f6LaUkIBMNt1.jpg"
-  );
   const [profileOpen, setProfileOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userPic, setUserPic] = useState("");
   const dropdownRef = useRef();
 
   const toggleSidebar = () => {
@@ -22,7 +19,17 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const handleLogin = () => {
     setIsLoggedIn(true);
     setProfileOpen(false);
-   
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userProfilePic");
+
+    setIsLoggedIn(false);
+    setUserPic("");
+    setProfileOpen(false);
   };
 
   // Close dropdown on outside click
@@ -34,6 +41,17 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Check login state and profile image on load
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const storedPic = localStorage.getItem("userProfilePic");
+
+    if (userId) {
+      setIsLoggedIn(true);
+      setUserPic(storedPic || "https://via.placeholder.com/40");
+    }
   }, []);
 
   return (
@@ -98,48 +116,43 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
           </button>
 
           {/* Profile Dropdown */}
-          <div>
           <div className="relative" ref={dropdownRef}>
             <img
               onClick={() => setProfileOpen((prev) => !prev)}
-              src={userPic}
+              src={userPic || "https://via.placeholder.com/40"}
               alt="Profile"
               className="w-8 h-8 rounded-full cursor-pointer border-2 border-gray-700 hover:border-white transition"
             />
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg py-2 z-20">
-                <Link
-                  to="/user/1"
-                  className="block px-4 py-2 text-sm hover:bg-gray-800 transition"
-                >
-                  Profile
-                </Link>
-
-                {/* 04:27 */}
-                {isLoggedIn  ? (
-                  <button
-                    onClick={() => {
-                      setIsLoggedIn(false);
-                      // setProfileOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition"
-                  >
-                    Logout
-                  </button>
+                {isLoggedIn ? (
+                  <>
+                    <Link
+                      to="/user/1"
+                      className="block px-4 py-2 text-sm hover:bg-gray-800 transition"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition"
+                    >
+                      Logout
+                    </button>
+                  </>
                 ) : (
-                  <Link to={'/login'}>
-                  <button
-                    onClick={handleLogin}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition"
-                  >
-                    Login
-                  </button>
+                  <Link to="/login">
+                    <button
+                      onClick={handleLogin}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition"
+                    >
+                      Login
+                    </button>
                   </Link>
                 )}
               </div>
-             )}
+            )}
           </div>
-        </div>
         </div>
       </nav>
     </header>
