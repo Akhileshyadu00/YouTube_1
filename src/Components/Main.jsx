@@ -1,66 +1,24 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Main({ fullNav }) {
-  const options = [
-    "All",
-    "Trending",
-    "Music",
-    "Gaming",
-    "News",
-    "Live",
-    "UPSC",
-    "English",
-    "React",
-    "Javascript",
-  ];
+  const [data, setData] = useState([]);
 
-  const videoData = [
-    {
-      id: 1,
-      thumbnail:
-        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      duration: "12:34",
-      avatar: "https://via.placeholder.com/40",
-      title: "Sample Video Title That Might Span Two Lines",
-      channel: "Channel Name",
-      views: "1.2M",
-      uploaded: "2 days ago",
-    },
-    {
-      id: 2,
-      thumbnail:
-        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      duration: "10:20",
-      avatar: "https://via.placeholder.com/40",
-      title: "Another Interesting Video on Technology Trends",
-      channel: "TechWorld",
-      views: "982K",
-      uploaded: "1 week ago",
-    },
-    {
-      id: 3,
-      thumbnail:
-        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      duration: "7:45",
-      avatar: "https://via.placeholder.com/40",
-      title: "Frontend Dev Tools You Should Know",
-      channel: "DevSphere",
-      views: "605K",
-      uploaded: "3 days ago",
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      duration: "9:10",
-      avatar: "https://via.placeholder.com/40",
-      title: "Mastering JavaScript in 20 Minutes",
-      channel: "CodeHub",
-      views: "1.5M",
-      uploaded: "5 days ago",
-    },
+  useEffect(() => {
+    axios
+      .get("http://localhost:4001/api/videos")
+      .then((res) => {
+        setData(res.data?.videos || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching videos:", err);
+      });
+  }, []);
+
+  const options = [
+    "All", "Trending", "Music", "Gaming", "News", "Live", "UPSC",
+    "English", "React", "Javascript"
   ];
 
   return (
@@ -89,38 +47,47 @@ function Main({ fullNav }) {
           fullNav ? "ml-60 lg:grid-cols-4" : "ml-16 lg:grid-cols-5"
         } grid-cols-1 sm:grid-cols-2 md:grid-cols-3`}
       >
-        {videoData.map((video) => (
-          <div key={video.id} className="text-white">
+        {data.map((video) => (
+          <div key={video._id || video.id} className="text-white">
             {/* Thumbnail */}
-            <Link to={`/watch/${video.id}`} className="relative w-full h-48 block">
+            <Link to={`/watch/${video._id || video.id}`} className="relative block">
               <img
-                src={video.thumbnail}
-                alt={`Thumbnail of ${video.title}`}
-                className="w-full h-full object-cover rounded-lg"
-                onError={(e) =>
-                  (e.target.src = "https://via.placeholder.com/480x270?text=No+Image")
-                }
+                src={video.thumbnail || "https://via.placeholder.com/300x200?text=No+Thumbnail"}
+                alt={video.title || "Video thumbnail"}
+                className="object-cover w-full h-full rounded-lg"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/300x200?text=No+Thumbnail";
+                }}
               />
-              <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 px-2 py-0.5 text-xs rounded">
-                {video.duration}
+              <div className="absolute bottom-1 right-1 bg-black bg-opacity-60 text-white text-xs px-1 py-0.5 rounded">
+                {video.duration || "00:00"}
               </div>
             </Link>
 
             {/* Details */}
             <div className="flex mt-3 gap-3">
               <img
-                src={video.avatar}
-                alt={`Avatar of ${video.channel}`}
+                src={video.user?.profilePic || "https://via.placeholder.com/40"}
+                alt={`Avatar of ${video.user?.channelName || "Unknown"}`}
                 className="w-10 h-10 rounded-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/40";
+                }}
               />
               <div className="flex flex-col">
                 <h2 className="font-semibold text-sm line-clamp-2">
-                  {video.title}
+                  {video.title || "Untitled Video"}
                 </h2>
-                <h4 className="text-gray-400 text-sm">{video.channel}</h4>
+                <h4 className="text-gray-400 text-sm">
+                  {video.user?.channelName || "Unknown Channel"}
+                </h4>
                 <div className="text-gray-500 text-xs">
-                  <span>{video.views} views</span> •{" "}
-                  <span>{video.uploaded}</span>
+                  <span>{video.views || 0} views</span> •{" "}
+                  <span>{video.like || 0} Likes</span> •{" "}
+                  <span>{video.dislike || 0} Dislikes</span> •{" "}
+                  <span>{new Date(video.createdAt).toLocaleDateString() || "N/A"}</span>
                 </div>
               </div>
             </div>
@@ -130,7 +97,5 @@ function Main({ fullNav }) {
     </div>
   );
 }
-
-
 
 export default Main;
