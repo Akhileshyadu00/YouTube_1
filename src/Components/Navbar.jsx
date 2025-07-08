@@ -7,7 +7,7 @@ import { TfiPlus } from "react-icons/tfi";
 import { IoIosNotifications } from "react-icons/io";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Navbar({ setSideNavbarfunc, sideNavbar }) {
@@ -15,7 +15,8 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const dropdownRef = useRef();
   const navigate = useNavigate();
 
-  const { isLoggedIn, userPic, logout } = useContext(AuthContext);
+  // ✅ Pull values from context
+  const { isLoggedIn, userPic, logout, userId } = useContext(AuthContext);
 
   const defaultAvatar =
     "https://static.vecteezy.com/system/resources/previews/002/318/271/non_2x/user-profile-icon-free-vector.jpg";
@@ -27,14 +28,18 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const handleLogout = async () => {
     try {
       await axios.post("http://localhost:4001/api/users/logout");
+      toast.success("Logout Successfully");
     } catch (err) {
       console.error("Logout failed:", err);
       toast.error("Server logout failed. Logging out locally.");
     }
 
-    logout(); // <- Clear context state (logout handled inside AuthContext)
+    logout();
     setProfileOpen(false);
-    navigate("/");
+
+    setTimeout(() => {
+      navigate("/");
+    }, 100);
   };
 
   // Close dropdown on outside click
@@ -50,6 +55,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
 
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-black text-white z-50 shadow-md">
+      <ToastContainer position="bottom-right" />
       <nav className="container mx-auto h-full flex justify-between items-center px-4 gap-4">
         {/* Left */}
         <div
@@ -57,7 +63,10 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
           className="flex items-center gap-3 cursor-pointer"
         >
           <IoMenu className="text-2xl hover:text-gray-400 transition-colors" />
-          <Link to="/" className="font-extrabold text-xl flex items-center gap-1">
+          <Link
+            to="/"
+            className="font-extrabold text-xl flex items-center gap-1"
+          >
             <IoLogoYoutube className="text-red-500 text-3xl" />
             <span>YouTube</span>
           </Link>
@@ -89,15 +98,17 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
 
         {/* Right */}
         <div className="flex items-center gap-6 relative">
-          <Link to="/user/1/create">
-            <button
-              className="flex items-center gap-2 px-3 py-1 text-base border border-gray-600 rounded-full hover:bg-gray-800 hover:text-white transition-colors"
-              title="Create"
-            >
-              <TfiPlus className="text-lg" />
-              <span className="hidden md:inline">Create</span>
-            </button>
-          </Link>
+          {isLoggedIn && userId && (
+            <Link to={`/user/${userId}/create`}>
+              <button
+                className="flex items-center gap-2 px-3 py-1 text-base border border-gray-600 rounded-full hover:bg-gray-800 hover:text-white transition-colors"
+                title="Create"
+              >
+                <TfiPlus className="text-lg" />
+                <span className="hidden md:inline">Create</span>
+              </button>
+            </Link>
+          )}
 
           <button
             className="relative text-xl hover:text-gray-400 transition-colors"
@@ -117,10 +128,10 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
 
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-lg py-2 z-20">
-                {isLoggedIn ? (
+                {isLoggedIn && userId ? (
                   <>
                     <Link
-                      to="/user/1"
+                      to={`/user/${userId}`}
                       className="block px-4 py-2 text-sm hover:bg-gray-800 transition"
                     >
                       Profile
@@ -134,9 +145,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
                   </>
                 ) : (
                   <Link to="/login">
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition"
-                    >
+                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800 transition">
                       Login
                     </button>
                   </Link>

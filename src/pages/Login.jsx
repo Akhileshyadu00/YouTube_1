@@ -24,20 +24,23 @@ function Login() {
     try {
       const response = await axios.post(
         "http://localhost:4001/api/users/login",
-        loginData
+        loginData, {withCredentials: true}
       );
       console.log(response);
 
       const { token, userName, user_id, user } = response.data;
+      const userId = user_id || user?._id;
 
       toast.success("Login successful!");
       setUserName(userName);
 
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", user_id);
+      localStorage.setItem("userId", userId);
       localStorage.setItem("userProfilePic", user?.profilePic || "");
+      //localStorage.setItem("userId", response.data.user._id);
 
-      login(user?.profilePic); // ✅ update global state
+
+      login(user?.profilePic, token, userId); // ✅ update global state
 
       setTimeout(() => {
         navigate("/");

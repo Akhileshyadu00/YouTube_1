@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { MdOutlineFeedback, MdOutlineCancel } from "react-icons/md";
@@ -7,30 +7,52 @@ function Create() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [inputField, setInputField] = useState({
+    title: "",
+    description: "",
+    videoLink: "",
+    thumbnail: "",
+    category: "",
+  });
+
   const [previewImage, setPreviewImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const categories = [
+    "Music",
+    "Gaming",
+    "News",
+    "Live",
+    "UPSC",
+    "English",
+    "React",
+    "Javascript",
+  ];
+
+  const handleChange = (e) => {
+    setInputField({ ...inputField, [e.target.name]: e.target.value });
+  };
 
   const uploadVideo = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setUploading(true);
     const data = new FormData();
     data.append("file", files[0]);
     data.append("upload_preset", "Youtube-clone");
 
     try {
-      const uploadResponse = await axios.post(
+      const res = await axios.post(
         "https://api.cloudinary.com/v1_1/djthu0xcg/video/upload",
         data
       );
-      setVideoUrl(uploadResponse.data.secure_url);
-      console.log("Uploaded video URL:", uploadResponse.data.secure_url);
+      setInputField((prev) => ({ ...prev, videoLink: res.data.secure_url }));
     } catch (err) {
-      console.error("Video upload failed:", err);
+      alert("Video upload failed.");
+      console.error(err);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -39,116 +61,150 @@ function Create() {
     if (!file) return;
 
     setPreviewImage(URL.createObjectURL(file));
+    setUploading(true);
 
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", "Youtube-clone");
 
     try {
-      const uploadResponse = await axios.post(
+      const res = await axios.post(
         "https://api.cloudinary.com/v1_1/djthu0xcg/image/upload",
         data
       );
-      setImageUrl(uploadResponse.data.secure_url);
-      console.log("Uploaded image URL:", uploadResponse.data.secure_url);
+      setInputField((prev) => ({ ...prev, thumbnail: res.data.secure_url }));
     } catch (err) {
-      console.error("Image upload failed:", err);
+      alert("Image upload failed.");
+      console.error(err);
+    } finally {
+      setUploading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!videoUrl || !imageUrl) {
-      alert("Please upload both video and image before submitting.");
+    const { title, videoLink, thumbnail, category } = inputField;
+
+    if (!title.trim() || !videoLink || !thumbnail || !category.trim()) {
+      alert("Please fill all required fields and upload files.");
       return;
     }
 
-    const videoData = {
-      userId: id,
-      title,
-      description,
-      category,
-      videoUrl,
-      imageUrl,
-    };
-
     try {
-      console.log("Submitting video data:", videoData);
-      // Example backend call
-      // await axios.post("/api/videos", videoData);
-      alert("Video and image uploaded successfully!");
+      const payload = { ...inputField, userId: id };
+
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://localhost:4001/api/videos",
+        payload,
+        {
+          headers: {
+            Authorization: `JWT ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(res);
+
+      alert("Video uploaded successfully!");
+      navigate("/");
     } catch (err) {
-      console.error("Submission failed:", err);
+      console.error(err);
+      alert("Failed to upload video.");
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, []);
+
   return (
     <div className="bg-black text-white min-h-screen px-6 pt-20">
-      {/* Header */}
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-2xl font-bold">Upload Video for User ID: {id}</h1>
+        <h1 className="text-2xl font-bold">Upload Video </h1>
         <div className="flex gap-4 text-2xl">
-          <MdOutlineFeedback
-            className="cursor-pointer hover:text-gray-400"
-            title="Feedback"
-          />
+          <MdOutlineFeedback className="cursor-pointer hover:text-gray-400" />
           <MdOutlineCancel
             onClick={() => navigate("/")}
             className="cursor-pointer hover:text-red-500"
-            title="Cancel"
           />
         </div>
       </div>
 
-      {/* Form Container */}
       <div className="flex justify-center">
         <div className="w-full max-w-lg bg-gray-900 p-6 rounded-lg shadow-md">
           <form onSubmit={handleSubmit}>
             {/* Title */}
             <div className="mb-5">
-              <label className="block mb-2 text-sm font-semibold">Video Title</label>
+              <label className="block mb-2 text-sm font-semibold">
+                Video Title
+              </label>
               <input
+                name="title"
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={inputField.title}
+                onChange={handleChange}
                 placeholder="Enter a title..."
-                className="w-full p-2 rounded bg-gray-800 text-white outline-none focus:ring-2 focus:ring-red-600"
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                required
+                disabled={uploading}
               />
             </div>
 
             {/* Description */}
             <div className="mb-5">
-              <label className="block mb-2 text-sm font-semibold">Description</label>
+              <label className="block mb-2 text-sm font-semibold">
+                Description
+              </label>
               <input
+                name="description"
                 type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={inputField.description}
+                onChange={handleChange}
                 placeholder="Enter description..."
-                className="w-full p-2 rounded bg-gray-800 text-white outline-none focus:ring-2 focus:ring-red-600"
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                disabled={uploading}
               />
             </div>
 
             {/* Category */}
             <div className="mb-5">
-              <label className="block mb-2 text-sm font-semibold">Category</label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Enter category..."
-                className="w-full p-2 rounded bg-gray-800 text-white outline-none focus:ring-2 focus:ring-red-600"
-              />
+              <label className="block mb-2 text-sm font-semibold">
+                Category
+              </label>
+              <select
+                name="category"
+                value={inputField.category}
+                onChange={handleChange}
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                required
+                disabled={uploading}
+              >
+                <option value="">Select category...</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Image Upload */}
             <div className="mb-6">
-              <label className="block mb-2 text-sm font-semibold">Thumbnail Image</label>
+              <label className="block mb-2 text-sm font-semibold">
+                Thumbnail Image
+              </label>
               <input
                 onChange={uploadImage}
                 type="file"
                 accept="image/*"
-                className="w-full text-sm text-gray-300 file:bg-gray-700 file:text-white file:border-none file:px-4 file:py-2 file:rounded cursor-pointer"
+                className="w-full text-sm text-gray-300 file:bg-gray-700 file:text-white file:border-none"
+                disabled={uploading}
+                required={!inputField.thumbnail}
               />
               {previewImage && (
                 <img
@@ -161,15 +217,21 @@ function Create() {
 
             {/* Video Upload */}
             <div className="mb-6">
-              <label className="block mb-2 text-sm font-semibold">Video File</label>
+              <label className="block mb-2 text-sm font-semibold">
+                Video File
+              </label>
               <input
                 onChange={uploadVideo}
                 type="file"
                 accept="video/*"
-                className="w-full text-sm text-gray-300 file:bg-gray-700 file:text-white file:border-none file:px-4 file:py-2 file:rounded cursor-pointer"
+                className="w-full text-sm text-gray-300 file:bg-gray-700 file:text-white"
+                disabled={uploading}
+                required={!inputField.videoLink}
               />
-              {videoUrl && (
-                <p className="text-green-400 text-sm mt-2">Video uploaded successfully.</p>
+              {inputField.videoLink && (
+                <p className="text-green-400 text-sm mt-2">
+                  Video uploaded successfully.
+                </p>
               )}
             </div>
 
@@ -177,9 +239,14 @@ function Create() {
             <div className="flex flex-col sm:flex-row gap-3 mt-6">
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition text-center"
+                disabled={uploading}
+                className={`w-full sm:w-auto px-6 py-2 rounded-full font-medium transition text-center ${
+                  uploading
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700 text-white"
+                }`}
               >
-                Upload Video
+                {uploading ? "Uploading..." : "Upload Video"}
               </button>
               <Link to="/">
                 <button

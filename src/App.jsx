@@ -8,6 +8,8 @@ import Registration from "./pages/Register";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
 import Video from "./Components/Video";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { AuthProvider } from "./context/AuthContext";
 
@@ -27,9 +29,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/watch/:id" element={<Video />} />
-          <Route path="/user/:id" element={<Profile sideNavbar={sideNavbar} />} />
           <Route path="/user/:id/create" element={<Create />} />
+          <Route path="/user/:id" element={<Profile sideNavbar={sideNavbar} />} />
+        
         </Routes>
+
+        {/* Global toast container for all pages */}
+        <ToastContainer position="bottom-right" />
       </AuthProvider>
     </BrowserRouter>
   );
