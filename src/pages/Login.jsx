@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthContext } from "../context/AuthContext"; // ✅ import the AuthContext
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
   const [loginData, setLoginData] = useState({
@@ -11,9 +11,8 @@ function Login() {
     password: "",
   });
 
-  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // ✅ use login from context
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,27 +23,34 @@ function Login() {
     try {
       const response = await axios.post(
         "http://localhost:4001/api/users/login",
-        loginData, {withCredentials: true}
+        loginData,
+        { withCredentials: true }
       );
-      console.log(response);
-
+      // Robust extraction of user and userId
       const { token, userName, user_id, user } = response.data;
-      const userId = user_id || user?._id;
+      const userId = user_id || user?._id || user?.id;
+
+      if (!userId) {
+        toast.error("User ID not found in response.");
+        return;
+      }
 
       toast.success("Login successful!");
-      setUserName(userName);
 
+      // Store user info in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
+      localStorage.setItem("userName", userName)
       localStorage.setItem("userProfilePic", user?.profilePic || "");
-      //localStorage.setItem("userId", response.data.user._id);
+      localStorage.setItem("user", JSON.stringify(user || {}));
 
+      // Update global context
+      login(user?.profilePic, token, userId);
 
-      login(user?.profilePic, token, userId); // ✅ update global state
-
+      // Redirect to user profile page
       setTimeout(() => {
-        navigate("/");
-      }, 1500);
+        navigate(`/user/${userId}`);
+      }, 1000);
     } catch (err) {
       console.error("Login error:", err.response || err);
       toast.error(

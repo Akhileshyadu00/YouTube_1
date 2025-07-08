@@ -1,56 +1,81 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
 import SideNavbar from "../Components/SideNavbar";
-import { AuthContext } from "../context/AuthContext";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Profile({ sideNavbar }) {
-  const { id: paramId } = useParams();
-  const { userId: contextUserId } = useContext(AuthContext);
-
-  const actualUserId = paramId || contextUserId;
-
-  const [data, setData] = useState([]);
+  const { id } = useParams();
+  const [videos, setVideos] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch user/channel info
+  const fetchUserData = async () => {
+    try {
+      const res = await axios.get(`http://localhost:4001/api/users/${id}`);
+      setUser(res.data.user || res.data.data || res.data);
+    } catch (err) {
+      console.error("User fetch error:", err);
+      setUser(null);
+      toast.error("Failed to load user info.");
+    }
+  };
+
+  // Fetch videos for this user/channel
+  const fetchVideos = async () => {
+    try {
+      const res = await axios.get(`http://localhost:4001/api/videos/${id}/channel`);
+      setVideos(res.data.videos || []);
+    } catch (err) {
+      console.error("Videos fetch error:", err);
+      setVideos([]);
+      toast.error("Failed to load videos.");
+    }
+  };
+
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        if (!actualUserId) return; // Wait until we have an ID
+    let isMounted = true;
+    setLoading(true);
 
-        const response = await axios.get(
-          `http://localhost:4001/api/videos/${actualUserId}/channel`
-        );
-
-        setData(response.data.videos || []);
-        setUser(response.data.videos[0]?.user || null);
-      } catch (error) {
-        console.error("Failed to fetch profile data:", error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchAll = async () => {
+      await Promise.all([fetchUserData(), fetchVideos()]);
+      if (isMounted) setLoading(false);
     };
 
-    fetchProfileData();
-  }, [actualUserId]);
+    if (id) fetchAll();
 
+    return () => { isMounted = false; };
+  }, [id]);
+
+  // Loading State
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-black text-white">
-        <p>Loading profile...</p>
+      <div className="flex bg-black min-h-screen text-white">
+        <SideNavbar sideNavbar={sideNavbar} />
+        <main className="flex-1 flex items-center justify-center">
+          <span className="text-xl">Loading...</span>
+        </main>
       </div>
     );
   }
 
+  // User Not Found State
   if (!user) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-black text-white">
-        <p>User not found.</p>
+      <div className="flex bg-black min-h-screen text-white">
+        <SideNavbar sideNavbar={sideNavbar} />
+        <main className="flex-1 flex flex-col items-center justify-center">
+          <span className="text-xl text-red-500 mb-4">User not found.</span>
+          <Link to="/" className="text-blue-400 underline">
+            Go Home
+          </Link>
+        </main>
       </div>
     );
   }
 
+  // Main Profile Content
   return (
     <div className="flex bg-black min-h-screen text-white">
       {/* Sidebar */}
@@ -64,30 +89,29 @@ function Profile({ sideNavbar }) {
       >
         {/* Header */}
         <header className="mb-6 border-b border-gray-700 pb-4">
-          <h1 className="text-2xl font-bold">
-            {actualUserId === contextUserId ? "Your Channel" : `${user.userName}'s Channel`}
-          </h1>
+          <h1 className="text-2xl font-bold">{user?.channelName || user?.userName || "Channel"}</h1>
         </header>
 
         {/* Profile Info */}
         <section className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
           <img
-            src={user.profilePic}
-            alt={user.userName}
+            src={user?.profilePic || "/default-profile.png"}
+            alt={user?.userName || "User"}
             className="w-20 h-20 rounded-full object-cover"
           />
           <div>
-            <h2 className="text-xl font-semibold">{user.channelName}</h2>
-            <p className="text-gray-400 text-sm">{data.length} Videos</p>
-            <h3 className="text-gray-400 text-sm">{user.about}</h3>
+            <h2 className="text-xl font-semibold">{user?.channelName || user?.userName || "Channel Name"}</h2>
+            <p className="text-gray-400 text-sm">{videos.length} Videos</p>
+            <h3 className="text-gray-400 text-sm">{user?.about || "No channel description."}</h3>
           </div>
         </section>
 
         {/* Uploaded Videos */}
-        <section>
-          <h3 className="text-lg font-semibold mb-4">Uploaded Videos</h3>
+        {videos.length === 0 ? (
+          <p className="text-gray-500">No videos uploaded yet.</p>
+        ) : (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {data.map((video) => (
+            {videos.map((video) => (
               <Link to={`/watch/${video._id}`} key={video._id}>
                 <div className="bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
                   <div className="aspect-video">
@@ -110,7 +134,7 @@ function Profile({ sideNavbar }) {
               </Link>
             ))}
           </div>
-        </section>
+        )}
       </main>
     </div>
   );

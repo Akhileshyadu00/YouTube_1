@@ -53,6 +53,8 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  
+
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-black text-white z-50 shadow-md">
       <ToastContainer position="bottom-right" />
