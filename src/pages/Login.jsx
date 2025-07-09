@@ -27,20 +27,27 @@ function Login() {
         { withCredentials: true }
       );
       // Robust extraction of user and userId
-      const { token, userName, user_id, user } = response.data;
+      const { token, user_id, user} = response.data;
       const userId = user_id || user?._id || user?.id;
+        const userName = user?.userName || ""
+        const channelName = user?.channelName || ""; // <-- Extract channelName
+
+    // Pass ALL values to login!
+    login(user?.profilePic, token, userId, userName, channelName);
 
       if (!userId) {
         toast.error("User ID not found in response.");
         return;
       }
-
+      console.log(response);
+      
       toast.success("Login successful!");
 
       // Store user info in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
       localStorage.setItem("userName", userName)
+      localStorage.setItem("channelName", channelName)
       localStorage.setItem("userProfilePic", user?.profilePic || "");
       localStorage.setItem("user", JSON.stringify(user || {}));
 

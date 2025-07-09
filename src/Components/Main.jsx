@@ -10,8 +10,16 @@ function Main({ fullNav }) {
   const [error, setError] = useState("");
 
   const categories = [
-    "All", "Trending", "Music", "Gaming", "News", "Live", "UPSC",
-    "English", "React", "Javascript"
+    "All",
+    "Trending",
+    "Music",
+    "Gaming",
+    "News",
+    "Live",
+    "UPSC",
+    "English",
+    "React",
+    "Javascript",
   ];
 
   useEffect(() => {
@@ -48,65 +56,45 @@ function Main({ fullNav }) {
 
   return (
     <div className="flex flex-col overflow-x-hidden w-full bg-black min-h-screen text-white">
-      {/* Category Filter Bar */}
-      {/* <div
+      <div
         className={`fixed top-16 ${
           fullNav ? "left-60" : "left-0"
-        } right-0 z-10 bg-gray-900 px-4 py-2 overflow-x-auto whitespace-nowrap shadow-md scrollbar-hide`}
+        } right-0 z-10 bg-gray-900 px-2 py-2 shadow-md`}
       >
-        <div className="flex space-x-4">
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
-              className={`px-4 py-1 rounded-2xl text-sm transition-colors ${
+              className={`flex-shrink-0 min-w-max px-4 py-1 rounded-2xl text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                 selectedCategory === category
                   ? "bg-white text-black"
                   : "bg-gray-700 hover:bg-gray-600"
               }`}
+              aria-pressed={selectedCategory === category}
               onClick={() => setSelectedCategory(category)}
             >
               {category}
             </button>
           ))}
         </div>
-      </div> */}
-
-      <div
-  className={`fixed top-16 ${
-    fullNav ? "left-60" : "left-0"
-  } right-0 z-10 bg-gray-900 px-2 py-2 shadow-md`}
->
-  <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
-    {categories.map((category) => (
-      <button
-        key={category}
-        className={`flex-shrink-0 min-w-max px-4 py-1 rounded-2xl text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          selectedCategory === category
-            ? "bg-white text-black"
-            : "bg-gray-700 hover:bg-gray-600"
-        }`}
-        aria-pressed={selectedCategory === category}
-        onClick={() => setSelectedCategory(category)}
-      >
-        {category}
-      </button>
-    ))}
-  </div>
-</div>
-
+      </div>
 
       {/* Video Grid */}
       <div
-        className={`mt-24 px-4 grid gap-6 ${
+        className={`mt-30 px-4 grid gap-6 ${
           fullNav ? "ml-60" : "ml-4"
         } grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4`}
       >
         {loading ? (
-          <p className="col-span-full text-center text-gray-400">Loading videos...</p>
+          <p className="col-span-full text-center text-gray-400">
+            Loading videos...
+          </p>
         ) : error ? (
           <p className="col-span-full text-center text-red-500">{error}</p>
         ) : filteredVideos.length === 0 ? (
-          <p className="col-span-full text-center text-gray-500">No videos found</p>
+          <p className="col-span-full text-center text-gray-500">
+            No videos found
+          </p>
         ) : (
           filteredVideos.map((video) => (
             <div
@@ -115,12 +103,16 @@ function Main({ fullNav }) {
             >
               <Link to={`/watch/${video._id}`} className="block relative">
                 <img
-                  src={video.thumbnail || "https://via.placeholder.com/300x200?text=No+Thumbnail"}
+                  src={
+                    video.thumbnail ||
+                    "https://via.placeholder.com/300x200?text=No+Thumbnail"
+                  }
                   alt={video.title || "Video thumbnail"}
                   className="w-full aspect-video object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/300x200?text=No+Thumbnail";
+                    e.target.src =
+                      "https://via.placeholder.com/300x200?text=No+Thumbnail";
                   }}
                 />
                 <span className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-xs px-1 py-0.5 rounded">
@@ -130,7 +122,9 @@ function Main({ fullNav }) {
 
               <div className="flex gap-3 p-3">
                 <img
-                  src={video.user?.profilePic || "https://via.placeholder.com/40"}
+                  src={
+                    video.user?.profilePic || "https://via.placeholder.com/40"
+                  }
                   alt={video.user?.channelName || "User"}
                   className="w-10 h-10 rounded-full object-cover"
                   onError={(e) => {

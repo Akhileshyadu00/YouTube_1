@@ -1,3 +1,4 @@
+
 import React from 'react'
 
 const CategoryFilter = ({ categories, selected, onSelect, fullNav }) => (
