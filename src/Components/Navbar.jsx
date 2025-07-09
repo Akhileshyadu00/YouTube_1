@@ -52,17 +52,16 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   
 
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-black text-white z-50 shadow-md">
       <ToastContainer position="bottom-right" />
-      <nav className="container mx-auto h-full flex justify-between items-center px-4 gap-4">
+      <nav className=" mx-auto h-full flex justify-between items-center px-4 gap-4">
         {/* Left */}
         <div
           onClick={toggleSidebar}
-          className="flex items-center gap-3 cursor-pointer"
+          className=" flex items-center gap-2 cursor-pointer"
         >
           <IoMenu className="text-2xl hover:text-gray-400 transition-colors" />
           <Link
@@ -75,7 +74,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
         </div>
 
         {/* Middle */}
-        <div className="flex flex-1 justify-center items-center gap-4 max-w-2xl">
+        <div className="flex flex-1 justify-center items-center gap-4 max-w-2xl left-22">
           <div className="flex flex-1 items-center border border-gray-600 rounded-full overflow-hidden bg-gray-900">
             <input
               type="text"
