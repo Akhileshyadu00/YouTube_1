@@ -1,20 +1,44 @@
 const suggestions = [
   {
-    title: "How to Learn React Fast",
-    channel: "CodeMaster",
-    thumbnail: "https://source.unsplash.com/random/100x60?sig=1",
-    video: "/watch/abc123", 
-  },
-  {
     title: "10 Amazing CSS Tricks",
     channel: "DesignHub",
-    thumbnail: "https://source.unsplash.com/random/100x60?sig=2",
+    thumbnail: "https://media.istockphoto.com/id/1476727591/photo/carbon-balance-is-zero-the-hand-of-pollution-and-efficient-management-with-netzero-symbols.jpg?s=612x612&w=0&k=20&c=cQMqh5l8N03R7ogJWDNFf3XYJvhd-XCX0U5s3ScB8l8=",
     video: "/watch/def456",
   },
   {
     title: "JavaScript Async Explained",
     channel: "JS Academy",
-    thumbnail: "https://source.unsplash.com/random/100x60?sig=3",
+    thumbnail: "https://media.istockphoto.com/id/1470986827/photo/businessman-using-laptop-with-ai-tech-auto-insurance-service-concept-travel-insurance-data.jpg?s=612x612&w=0&k=20&c=AKBV608awZR1hULillcxPSbgSF2S_J7kl4bFp9GO3nM=",
+    video: "/watch/ghi789",
+  },
+   {
+    title: "JavaScript Async Explained",
+    channel: "JS Academy",
+    thumbnail: "https://media.istockphoto.com/id/2149600154/photo/cost-reduction-business-finance-concept-businessman-with-virtual-screen-of-cost-reduction.jpg?s=612x612&w=0&k=20&c=1OPm-IVkAmluxq2XwsV4dtRs79WxJIXdx5Adac4r1kE=",
+    video: "/watch/ghi789",
+  },
+   {
+    title: "JavaScript Async Explained",
+    channel: "JS Academy",
+    thumbnail: "https://media.istockphoto.com/id/1279995716/vector/a-hand-holds-a-help-sign-from-a-mobile-phone.jpg?s=612x612&w=0&k=20&c=Na1p_rmuYSsB5l551ZP-0PHchiBlo1-ac-_n43EcSS8=",
+    video: "/watch/ghi789",
+  },
+   {
+    title: "JavaScript Async Explained",
+    channel: "JS Academy",
+    thumbnail: "https://media.istockphoto.com/id/1255060726/vector/businesswoman-coach-presenting-anti-crisis-concept-deadline-plan-for-bankrupt-company-income.jpg?s=612x612&w=0&k=20&c=oYIGVT_Rc1GpuBGEXHF3nglHs2Y0dbr7RZHOddOr_Ng=",
+    video: "/watch/ghi789",
+  },
+   {
+    title: "JavaScript Async Explained",
+    channel: "JS Academy",
+    thumbnail: "https://media.istockphoto.com/id/1282840278/photo/neon-sign-cyber-week.jpg?s=612x612&w=0&k=20&c=HngdnchOA2XxNtaoFW4QVRq4T1KhEvgnF_WCcGZZSpc=",
+    video: "/watch/ghi789",
+  },
+   {
+    title: "JavaScript Async Explained",
+    channel: "JS Academy",
+    thumbnail: "https://media.istockphoto.com/id/1169700200/photo/risk-management-and-assessment-for-business.jpg?s=612x612&w=0&k=20&c=c-pc4KbAJftsArUQMPc2NqyYWlm7TjcO0hW81KdNKIc=",
     video: "/watch/ghi789",
   },
   

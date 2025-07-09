@@ -49,7 +49,7 @@ function Main({ fullNav }) {
   return (
     <div className="flex flex-col overflow-x-hidden w-full bg-black min-h-screen text-white">
       {/* Category Filter Bar */}
-      <div
+      {/* <div
         className={`fixed top-16 ${
           fullNav ? "left-60" : "left-0"
         } right-0 z-10 bg-gray-900 px-4 py-2 overflow-x-auto whitespace-nowrap shadow-md scrollbar-hide`}
@@ -69,7 +69,31 @@ function Main({ fullNav }) {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
+
+      <div
+  className={`fixed top-16 ${
+    fullNav ? "left-60" : "left-0"
+  } right-0 z-10 bg-gray-900 px-2 py-2 shadow-md`}
+>
+  <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
+    {categories.map((category) => (
+      <button
+        key={category}
+        className={`flex-shrink-0 min-w-max px-4 py-1 rounded-2xl text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+          selectedCategory === category
+            ? "bg-white text-black"
+            : "bg-gray-700 hover:bg-gray-600"
+        }`}
+        aria-pressed={selectedCategory === category}
+        onClick={() => setSelectedCategory(category)}
+      >
+        {category}
+      </button>
+    ))}
+  </div>
+</div>
+
 
       {/* Video Grid */}
       <div
