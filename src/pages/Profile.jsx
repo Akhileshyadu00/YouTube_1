@@ -25,7 +25,12 @@ function Profile({ sideNavbar }) {
   // Fetch videos for this user/channel
   const fetchVideos = async () => {
     try {
-      const res = await axios.get(`http://localhost:4001/api/videos/${id}/channel`);
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`http://localhost:4001/api/videos/${id}/channel`,
+         { headers: { Authorization: `JWT ${token}`,
+         withCredentials: true }
+      }
+      );
       setVideos(res.data.videos || []);
     } catch (err) {
       console.error("Videos fetch error:", err);
