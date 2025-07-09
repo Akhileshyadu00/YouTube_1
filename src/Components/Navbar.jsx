@@ -10,6 +10,7 @@ import { AuthContext } from "../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfileDropdown from "./ProfileDropdown";
+import SearchBar from "./SearchBar";
 
 function Navbar({ setSideNavbar, sideNavbar }) {
   const [profileOpen, setProfileOpen] = useState(false);
@@ -72,7 +73,7 @@ function Navbar({ setSideNavbar, sideNavbar }) {
         </div>
 
         {/* Middle */}
-        <div className="flex flex-1 justify-center items-center gap-4 max-w-2xl left-22">
+        {/* <div className="flex flex-1 justify-center items-center gap-4 max-w-2xl left-22">
           <div className="flex flex-1 items-center border border-gray-600 rounded-full overflow-hidden bg-gray-900">
             <input
               type="text"
@@ -87,7 +88,8 @@ function Navbar({ setSideNavbar, sideNavbar }) {
           <button className="bg-gray-700 p-3 rounded-full hover:bg-gray-600 transition-colors" title="Voice Search">
             <MdKeyboardVoice className="text-2xl text-white" />
           </button>
-        </div>
+        </div> */}
+        <SearchBar />
 
         {/* Right */}
         <div className="flex items-center gap-6 relative">
