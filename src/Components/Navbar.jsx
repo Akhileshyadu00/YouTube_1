@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from "./SearchBar";
 
-function Navbar({ setSideNavbar, sideNavbar }) {
+function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef();
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ function Navbar({ setSideNavbar, sideNavbar }) {
   };
 
   const toggleSidebar = () => {
-    setSideNavbar(!sideNavbar);
+    setSideNavbarfunc(!sideNavbar);
   };
 
   const handleLogout = async () => {
@@ -108,7 +108,7 @@ function Navbar({ setSideNavbar, sideNavbar }) {
           <div className="relative" ref={dropdownRef}>
             {!isLoggedIn ? (
               <button
-                className="w-24 px-4 py-2 rounded-full bg-gray-600 hover:bg-gray-700 text-white font-semibold transition"
+                className="w-24 px-4 py-2 rounded-full bg-black hover:bg-gray-600 text-white font-semibold transition"
                 onClick={() => navigate("/login")}
               >
                 Login

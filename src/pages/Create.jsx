@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { MdOutlineFeedback, MdOutlineCancel } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Create() {
   const { id } = useParams();
@@ -17,6 +19,7 @@ function Create() {
 
   const [previewImage, setPreviewImage] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const categories = [
     "Music",
@@ -34,12 +37,14 @@ function Create() {
   };
 
   const uploadVideo = async (e) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
     setUploading(true);
+    setErrorMessage("");
+
     const data = new FormData();
-    data.append("file", files[0]);
+    data.append("file", file);
     data.append("upload_preset", "Youtube-clone");
 
     try {
@@ -48,9 +53,11 @@ function Create() {
         data
       );
       setInputField((prev) => ({ ...prev, videoLink: res.data.secure_url }));
+      toast.success("🎥 Video uploaded successfully!");
     } catch (err) {
-      alert("Video upload failed.");
-      console.error(err);
+      console.error("Video upload failed:", err);
+      toast.error("❌ Failed to upload video.");
+      setErrorMessage("Video upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -62,6 +69,7 @@ function Create() {
 
     setPreviewImage(URL.createObjectURL(file));
     setUploading(true);
+    setErrorMessage("");
 
     const data = new FormData();
     data.append("file", file);
@@ -73,9 +81,11 @@ function Create() {
         data
       );
       setInputField((prev) => ({ ...prev, thumbnail: res.data.secure_url }));
+      toast.success("🖼️ Image uploaded successfully!");
     } catch (err) {
-      alert("Image upload failed.");
-      console.error(err);
+      console.error("Image upload failed:", err);
+      toast.error("❌ Failed to upload image.");
+      setErrorMessage("Image upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -83,19 +93,20 @@ function Create() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     const { title, videoLink, thumbnail, category } = inputField;
 
     if (!title.trim() || !videoLink || !thumbnail || !category.trim()) {
-      alert("Please fill all required fields and upload files.");
+      toast.warning("⚠️ Please fill in all required fields.");
       return;
     }
 
     try {
       const payload = { ...inputField, userId: id };
-
       const token = localStorage.getItem("token");
-      const res = await axios.post(
+
+      await axios.post(
         "http://localhost:4001/api/videos",
         payload,
         {
@@ -105,13 +116,13 @@ function Create() {
           withCredentials: true,
         }
       );
-      console.log(res);
 
-      alert("Video uploaded successfully!");
-      navigate("/");
+      toast.success("✅ Video uploaded successfully!");
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      console.error(err);
-      alert("Failed to upload video.");
+      console.error("Submit failed:", err);
+      toast.error("❌ Failed to upload video.");
+      setErrorMessage("Upload failed. Please check your connection or inputs.");
     }
   };
 
@@ -124,8 +135,10 @@ function Create() {
 
   return (
     <div className="bg-black text-white min-h-screen px-6 pt-20">
+      <ToastContainer position="top-right" autoClose={4000} />
+
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-2xl font-bold">Upload Video </h1>
+        <h1 className="text-2xl font-bold">Upload Video</h1>
         <div className="flex gap-4 text-2xl">
           <MdOutlineFeedback className="cursor-pointer hover:text-gray-400" />
           <MdOutlineCancel
@@ -193,7 +206,7 @@ function Create() {
               </select>
             </div>
 
-            {/* Image Upload */}
+            {/* Thumbnail Upload */}
             <div className="mb-6">
               <label className="block mb-2 text-sm font-semibold">
                 Thumbnail Image
@@ -230,10 +243,15 @@ function Create() {
               />
               {inputField.videoLink && (
                 <p className="text-green-400 text-sm mt-2">
-                  Video uploaded successfully.
+                  ✅ Video uploaded successfully.
                 </p>
               )}
             </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <p className="text-red-400 text-sm mt-2">{errorMessage}</p>
+            )}
 
             {/* Submit Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mt-6">

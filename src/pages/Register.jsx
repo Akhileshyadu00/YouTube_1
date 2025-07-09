@@ -9,7 +9,6 @@ function Registration() {
     userName: "",
     email: "",
     password: "",
-    channelName: "",
     about: "",
     profileImage: null,
   });
@@ -52,9 +51,9 @@ function Registration() {
     e.preventDefault();
 
     // Basic validation
-    const { userName, email, password, channelName, about } = formData;
+    const { userName, email, password,  about } = formData;
 
-    if (!userName || !email || !password || !channelName || !about) {
+    if (!userName || !email || !password || !about) {
       toast.error("All fields are required.");
       return;
     }
@@ -93,7 +92,7 @@ function Registration() {
       userName,
       email,
       password,
-      channelName,
+    
       profilePic: imageUrl,
       about,
     };
@@ -112,7 +111,7 @@ function Registration() {
         userName: "",
         email: "",
         password: "",
-        channelName: "",
+        
         about: "",
         profileImage: null,
       });
@@ -186,21 +185,6 @@ function Registration() {
           />
         </div>
 
-        {/* Channel Name */}
-        <div className="mb-4">
-          <label htmlFor="channelName" className="block mb-1">
-            Channel Name
-          </label>
-          <input
-            id="channelName"
-            type="text"
-            name="channelName"
-            value={formData.channelName}
-            onChange={handleChange}
-            required
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
-          />
-        </div>
 
         {/* About */}
         <div className="mb-4">

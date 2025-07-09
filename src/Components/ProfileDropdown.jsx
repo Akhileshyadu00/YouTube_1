@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
+import { GrChannel } from "react-icons/gr";
 import {
   MdOutlineSwitchAccount,
   MdLogout,
@@ -48,13 +49,14 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
 
       <hr className="border-gray-700 my-2" />
 
-      <MenuItem icon={<FaGoogle />} label="Google Account" />
+      <Link to={`/createchannel`}><MenuItem icon={<GrChannel />} label="Create Channel" /> </Link>
+      <MenuItem icon={<MdLogout />} label="Sign out" onClick={handleLogout} />
       <MenuItem
         icon={<MdOutlineSwitchAccount />}
         label="Switch account"
         rightArrow
       />
-      <MenuItem icon={<MdLogout />} label="Sign out" onClick={handleLogout} />
+      
 
       <hr className="border-gray-700 my-2" />
 

@@ -23,14 +23,12 @@ function Video() {
   // Fetch video and user like/dislike status
   const fetchVideoById = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
-
       const res = await axios.get(
         `http://localhost:4001/api/videos/${id}`,
         token
-          ? {
-              headers: { Authorization: `JWT ${token}`, withCredentials: true },
-            }
+          ? { headers: { Authorization: `Bearer ${token}` } }
           : undefined
       );
       const videoData = res.data.video;
@@ -38,8 +36,17 @@ function Video() {
       setVideoUrl(videoData.videoLink);
       setLikeCount(videoData.like || 0);
       setDislikeCount(videoData.dislike || 0);
-      setUserLikeStatus(res.data.userLikeStatus); // "liked", "disliked", or null
+
+      // Check if user has liked/disliked the video
+      if (token && userId && videoData.likedBy && videoData.dislikedBy) {
+        if (videoData.likedBy.includes(userId)) setUserLikeStatus("liked");
+        else if (videoData.dislikedBy.includes(userId)) setUserLikeStatus("disliked");
+        else setUserLikeStatus(null);
+      } else {
+        setUserLikeStatus(null);
+      }
     } catch (err) {
+      setData(null);
       console.error("Failed to fetch video:", err);
     } finally {
       setLoading(false);
@@ -101,9 +108,8 @@ function Video() {
 
   useEffect(() => {
     fetchVideoById();
-    // Comments handled by Comments component
     // eslint-disable-next-line
-  }, [id]);
+  }, [id, userId]);
 
   if (loading) {
     return <div className="text-white text-center mt-10">Loading video...</div>;
@@ -148,6 +154,7 @@ function Video() {
               <h4 className="text-base font-semibold">
                 {data.user?.channelName || "Unknown"}
               </h4>
+              {/* Followers/subscribers placeholder */}
               <p className="text-sm text-gray-400">
                 {data.user?.followers || "N/A"} followers
               </p>
@@ -190,7 +197,7 @@ function Video() {
             <button className="p-2 rounded-full hover:bg-gray-700 transition">
               <IoIosNotifications className="text-white text-2xl" />
             </button>
-            <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium">
+            <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium" disabled>
               Subscribe
             </button>
           </div>
@@ -208,11 +215,11 @@ function Video() {
         </div>
 
         {/* Comments Section */}
-        <Comments videoId={id} currentUserId={userId}  currentUserPic={userPic}/>
+        <Comments videoId={id} currentUserId={userId} currentUserPic={userPic} />
       </div>
 
       {/* Suggestions */}
-      <Suggestion />
+      <Suggestion currentVideoId={id} />
     </div>
   );
 }
