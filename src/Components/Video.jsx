@@ -28,9 +28,11 @@ function Video() {
       const res = await axios.get(
         `http://localhost:4001/api/videos/${id}`,
         token
-          ? { headers: { Authorization: `Bearer ${token}` } }
+          ? { headers: { Authorization: `JWT ${token}` } }
           : undefined
       );
+      console.log(res);
+      
       const videoData = res.data.video;
       setData(videoData);
       setVideoUrl(videoData.videoLink);
@@ -152,12 +154,12 @@ function Video() {
             </Link>
             <div className="text-white">
               <h4 className="text-base font-semibold">
-                {data.user?.channelName || "Unknown"}
+                {data.channel?.channelName || "Unknown"}
               </h4>
               {/* Followers/subscribers placeholder */}
-              <p className="text-sm text-gray-400">
-                {data.user?.followers || "N/A"} followers
-              </p>
+            <p className="text-sm text-gray-400">
+  {data.channel?.subscribers || 0} subscribers
+</p>
             </div>
           </div>
 

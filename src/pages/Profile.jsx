@@ -126,6 +126,15 @@ function Profile({ sideNavbar }) {
           </div>
         )}
 
+        <div className="flex justify-end mb-4">
+  <Link
+    to={`/channel/${user._id}/edit`}
+    className="text-blue-400 hover:underline"
+  >
+    Edit Channel
+  </Link>
+</div>
+
 
       {/* Main Content */}
       <main
