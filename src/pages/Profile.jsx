@@ -10,6 +10,7 @@ function Profile({ sideNavbar }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  
   // Fetch user/channel info
   const fetchUserData = async () => {
     try {
@@ -23,22 +24,6 @@ function Profile({ sideNavbar }) {
   };
 
   // Fetch videos for this user/channel
-  // const fetchVideos = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const res = await axios.get(`http://localhost:4001/api/videos/user/${id}`,
-  //       { headers: { Authorization: `JWT ${token}`,
-  //       withCredentials: true }
-  //     }
-  //     );
-  //     setVideos(res.data.videos || []);
-  //   } catch (err) {
-  //     console.error("Videos fetch error:", err);
-  //     setVideos([]);
-  //     toast.error("Failed to load videos.");
-  //   }
-  // };
-
   // In your Profile component
   const fetchVideos = async () => {
     try {
@@ -76,9 +61,7 @@ function Profile({ sideNavbar }) {
     };
   }, [id]);
 
-   console.log(user)
-  
-   
+  console.log(user);
 
   // Loading State
   if (loading) {
@@ -115,26 +98,25 @@ function Profile({ sideNavbar }) {
       {/* Sidebar */}
       <SideNavbar isOpen={sideNavbar} />
 
-{/* Channel Banner */}
-        {user?.channelBanner && (
-          <div className="w-full mb-6">
-            <img
-              src={user.channelBanner}
-              alt="Channel Banner"
-              className="w-full h-48 sm:h-64 object-cover rounded-lg"
-            />
-          </div>
-        )}
+      {/* Channel Banner */}
+      {user?.channelBanner && (
+        <div className="w-full mb-6">
+          <img
+            src={user.channelBanner}
+            alt="Channel Banner"
+            className="w-full h-48 sm:h-64 object-cover rounded-lg"
+          />
+        </div>
+      )}
 
-        <div className="flex justify-end mb-4">
-  <Link
-    to={`/channel/${user._id}/edit`}
-    className="text-blue-400 hover:underline"
-  >
-    Edit Channel
-  </Link>
-</div>
-
+      <div className="flex justify-end mb-4">
+        <Link
+          to={`/channel/${user._id}/edit`}
+          className="text-blue-400 hover:underline"
+        >
+          Edit Channel
+        </Link>
+      </div>
 
       {/* Main Content */}
       <main
@@ -142,8 +124,6 @@ function Profile({ sideNavbar }) {
           sideNavbar ? "ml-60" : "ml-0"
         } p-4`}
       >
-        
-
         {/* Header */}
         <header className="mb-6 border-b border-gray-700 pb-4">
           <h1 className="text-2xl font-bold">

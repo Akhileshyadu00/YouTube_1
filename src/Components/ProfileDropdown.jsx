@@ -56,7 +56,7 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
         label="Switch account"
         rightArrow
       />
-      
+      {/* <MenuItem icon={<MdLogout />} label="Sign out" onClick={handleLogout} /> */}
 
       <hr className="border-gray-700 my-2" />
 

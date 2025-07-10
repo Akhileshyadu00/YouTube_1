@@ -6,8 +6,9 @@ import axios from "axios";
 import Suggestion from "./Suggestion";
 import Comments from "./Comments";
 import { AuthContext } from "../context/AuthContext";
+import SideNavbar from "../Components/SideNavbar";
 
-function Video() {
+function Video({ sideNavbar }) {
   const { userId, userPic } = useContext(AuthContext);
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -31,8 +32,6 @@ function Video() {
           ? { headers: { Authorization: `JWT ${token}` } }
           : undefined
       );
-      console.log(res);
-      
       const videoData = res.data.video;
       setData(videoData);
       setVideoUrl(videoData.videoLink);
@@ -121,107 +120,119 @@ function Video() {
     return <div className="text-white text-center mt-10">Video not found.</div>;
   }
 
+  // Responsive layout starts here
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-4 mt-4 bg-black min-h-screen">
-      {/* Video Section */}
-      <div className="w-full lg:w-3/4">
-        {/* Video Player */}
-        <div className="aspect-video bg-black rounded-lg overflow-hidden shadow-lg">
-          <video
-            src={videoUrl}
-            controls
-            autoPlay
-            poster={data.thumbnail}
-            className="w-full h-full object-contain"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+    <div className="flex bg-black min-h-screen">
+      {/* Sidebar */}
+      <SideNavbar isOpen={sideNavbar} />
 
-        {/* Title */}
-        <h2 className="text-white mt-4 text-xl font-semibold">{data.title}</h2>
+      {/* Main Content */}
+      <main className={`flex-1 transition-all duration-300 ${sideNavbar ? "ml-60" : "ml-0"} p-2 md:p-6`}>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Video and Details */}
+          <div className="w-full lg:w-3/4">
+            {/* Video Player */}
+            <div className="aspect-video bg-black rounded-lg overflow-hidden shadow-lg">
+              <video
+                src={videoUrl}
+                controls
+                autoPlay
+                poster={data.thumbnail}
+                className="w-full h-full object-contain"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
 
-        {/* Channel Info & Actions */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
-          {/* Channel Details */}
-          <div className="flex items-center gap-3">
-            <Link to={`/user/${data?.user?._id}`}>
-              <img
-                src={data.user?.profilePic || "https://via.placeholder.com/40"}
-                alt="Channel Avatar"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            </Link>
-            <div className="text-white">
-              <h4 className="text-base font-semibold">
-                {data.channel?.channelName || "Unknown"}
-              </h4>
-              {/* Followers/subscribers placeholder */}
-            <p className="text-sm text-gray-400">
-  {data.channel?.subscribers || 0} subscribers
-</p>
+            {/* Title */}
+            <h2 className="text-white mt-4 text-xl font-semibold break-words">{data.title}</h2>
+
+            {/* Channel Info & Actions */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
+              {/* Channel Details */}
+              <div className="flex items-center gap-3">
+                <Link to={`/user/${data?.user?._id}`}>
+                  <img
+                    src={data.user?.profilePic || "https://via.placeholder.com/40"}
+                    alt="Channel Avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                </Link>
+                <div className="text-white">
+                  <h4 className="text-base font-semibold">
+                    {data.channel?.channelName || "Unknown"}
+                  </h4>
+                  <p className="text-sm text-gray-400">
+                    {data.channel?.subscribers || 0} subscribers
+                  </p>
+                </div>
+              </div>
+
+              {/* Like/Dislike */}
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  className={`flex items-center gap-1 px-4 py-2 text-white rounded-full text-sm transition ${
+                    userLikeStatus === "liked"
+                      ? "bg-blue-700"
+                      : "bg-gray-800 hover:bg-gray-700"
+                  }`}
+                  onClick={handleLike}
+                  disabled={userLikeStatus === "liked"}
+                >
+                  <BiSolidLike className="text-lg" />
+                  {likeCount}
+                </button>
+                <button
+                  className={`flex items-center gap-1 px-4 py-2 text-white rounded-full text-sm transition ${
+                    userLikeStatus === "disliked"
+                      ? "bg-blue-700"
+                      : "bg-gray-800 hover:bg-gray-700"
+                  }`}
+                  onClick={handleDislike}
+                  disabled={userLikeStatus === "disliked"}
+                >
+                  <BiSolidDislike className="text-lg" />
+                  {dislikeCount}
+                </button>
+                {likeMessage && (
+                  <div className="text-yellow-400 mt-2 text-sm">{likeMessage}</div>
+                )}
+              </div>
+
+              {/* Subscribe */}
+              <div className="flex gap-3 items-center">
+                <button className="p-2 rounded-full hover:bg-gray-700 transition">
+                  <IoIosNotifications className="text-white text-2xl" />
+                </button>
+                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium" disabled>
+                  Subscribe
+                </button>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="mt-4 text-white">
+              <p className="text-sm text-gray-400">
+                Published on:{" "}
+                <span className="text-white">
+                  {new Date(data.createdAt).toLocaleDateString()}
+                </span>
+              </p>
+              <p className="text-sm mt-2 text-gray-300 break-words">{data.description}</p>
+            </div>
+
+            {/* Comments Section */}
+            <div className="mt-6">
+              <Comments videoId={id} currentUserId={userId} currentUserPic={userPic} />
             </div>
           </div>
 
-          {/* Like/Dislike */}
-          <div className="flex gap-3">
-            <button
-              className={`flex items-center gap-1 px-4 py-2 text-white rounded-full text-sm transition ${
-                userLikeStatus === "liked"
-                  ? "bg-blue-700"
-                  : "bg-gray-800 hover:bg-gray-700"
-              }`}
-              onClick={handleLike}
-              disabled={userLikeStatus === "liked"}
-            >
-              <BiSolidLike className="text-lg" />
-              {likeCount}
-            </button>
-            <button
-              className={`flex items-center gap-1 px-4 py-2 text-white rounded-full text-sm transition ${
-                userLikeStatus === "disliked"
-                  ? "bg-blue-700"
-                  : "bg-gray-800 hover:bg-gray-700"
-              }`}
-              onClick={handleDislike}
-              disabled={userLikeStatus === "disliked"}
-            >
-              <BiSolidDislike className="text-lg" />
-              {dislikeCount}
-            </button>
-          </div>
-          {likeMessage && (
-            <div className="text-yellow-400 mt-2 text-sm">{likeMessage}</div>
-          )}
-
-          {/* Subscribe */}
-          <div className="flex gap-3 items-center">
-            <button className="p-2 rounded-full hover:bg-gray-700 transition">
-              <IoIosNotifications className="text-white text-2xl" />
-            </button>
-            <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium" disabled>
-              Subscribe
-            </button>
+          {/* Suggestions */}
+          <div className="w-full lg:w-1/4 mt-8 lg:mt-0">
+            <Suggestion currentVideoId={id} />
           </div>
         </div>
-
-        {/* Description */}
-        <div className="mt-4 text-white">
-          <p className="text-sm text-gray-400">
-            Published on:{" "}
-            <span className="text-white">
-              {new Date(data.createdAt).toLocaleDateString()}
-            </span>
-          </p>
-          <p className="text-sm mt-2 text-gray-300">{data.description}</p>
-        </div>
-
-        {/* Comments Section */}
-        <Comments videoId={id} currentUserId={userId} currentUserPic={userPic} />
-      </div>
-
-      {/* Suggestions */}
-      <Suggestion currentVideoId={id} />
+      </main>
     </div>
   );
 }

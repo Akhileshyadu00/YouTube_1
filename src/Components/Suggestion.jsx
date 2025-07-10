@@ -48,7 +48,7 @@ import { Link } from "react-router-dom";
 
 export default function Suggestion() {
   return (
-    <aside className="w-full lg:w-1/4 flex flex-col gap-4">
+    <aside className="w-full flex flex-col gap-4">
       <h3 className="text-white text-lg font-semibold mb-2">Suggestions</h3>
       {suggestions.map((item, idx) => (
         <Link to={item.video} key={idx}>
