@@ -26,10 +26,9 @@ function Modal({ title, children, onClose }) {
   );
 }
 
-export default function ChannelPage({ sideNavbar,id }) {
- const params = useParams();
-  const channelId = id || params.id;
-  //const { id } = useParams();
+export default function ChannelPage({ sideNavbar }) {
+
+  const { id } = useParams();
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -48,20 +47,20 @@ export default function ChannelPage({ sideNavbar,id }) {
 
   useEffect(() => {
     // console.log("Channel ID:", id);
-    if (!channelId) {
+    if (!id) {
       setChannel(null);
       setLoading(false);
       return;
     }
     fetchChannel();
     // eslint-disable-next-line
-  }, [channelId]);
+  }, [id]);
 
   const fetchChannel = async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`http://localhost:4001/api/channels/${channelId}`, {
+      const res = await fetch(`http://localhost:4001/api/channels/${id}`, {
         headers: { Authorization: `JWT ${token}` },
         withCredentials: true,
       });
@@ -88,7 +87,7 @@ export default function ChannelPage({ sideNavbar,id }) {
     setChannelFormLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:4001/api/channels/${channel._channelId}`,
+        `http://localhost:4001/api/channels/${channel._id}`,
         {
           method: "PUT",
           headers: {

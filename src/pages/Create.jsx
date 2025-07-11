@@ -261,17 +261,17 @@ function Create() {
                 className={`w-full sm:w-auto px-6 py-2 rounded-full font-medium transition text-center ${
                   uploading
                     ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-red-600 hover:bg-gray-900 text-white"
                 }`}
               >
                 {uploading ? "Uploading..." : "Upload Video"}
               </button>
-              <Link to="/">
+              <Link to="/createChannel">
                 <button
                   type="button"
-                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition text-center"
+                  className="w-full sm:w-auto bg-gray-600 hover:bg-gray-900 text-white px-6 py-2 rounded-full font-medium transition text-center"
                 >
-                  Home
+                  Create Channel
                 </button>
               </Link>
             </div>

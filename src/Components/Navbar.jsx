@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from "./SearchBar";
+import PropTypes from "prop-types";
 
 function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const [profileOpen, setProfileOpen] = useState(false);
@@ -18,7 +19,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
   const navigate = useNavigate();
 
   // Auth context
-  const { isLoggedIn, userPic, logout, userId, userName, channelName } = useContext(AuthContext);
+  const { isLoggedIn, userPic, logout, userId, userName, channelName, channelId } = useContext(AuthContext);
 
   const defaultAvatar = "https://static.vecteezy.com/system/resources/previews/002/318/271/non_2x/user-profile-icon-free-vector.jpg";
 
@@ -27,6 +28,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
     name: userName || "User",
     channelName: channelName || "channelName",
     profilePic: userPic,
+    channelId: channelId 
   };
 
   const toggleSidebar = () => {
@@ -73,22 +75,6 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
         </div>
 
         {/* Middle */}
-        {/* <div className="flex flex-1 justify-center items-center gap-4 max-w-2xl left-22">
-          <div className="flex flex-1 items-center border border-gray-600 rounded-full overflow-hidden bg-gray-900">
-            <input
-              type="text"
-              placeholder="Search"
-              className="flex-grow p-2 pl-4 text-gray-100 bg-transparent focus:outline-none"
-              aria-label="Search"
-            />
-            <button className="bg-gray-700 p-2 border-l border-gray-600 hover:bg-gray-600 transition-colors" title="Search">
-              <CiSearch className="text-2xl text-white" />
-            </button>
-          </div>
-          <button className="bg-gray-700 p-3 rounded-full hover:bg-gray-600 transition-colors" title="Voice Search">
-            <MdKeyboardVoice className="text-2xl text-white" />
-          </button>
-        </div> */}
         <SearchBar />
 
         {/* Right */}
@@ -123,6 +109,8 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
                   aria-haspopup="true"
                   aria-expanded={profileOpen}
                   className="w-8 h-8 rounded-full cursor-pointer border-2 border-gray-700 hover:border-white transition"
+                  tabIndex={0}
+                  onError={(e) => { e.target.src = defaultAvatar; }}
                 />
                 <ProfileDropdown profileOpen={profileOpen} user={user} handleLogout={handleLogout} />
               </>
@@ -133,5 +121,10 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
     </header>
   );
 }
+
+Navbar.propTypes = {
+  setSideNavbarfunc: PropTypes.func.isRequired,
+  sideNavbar: PropTypes.bool.isRequired,
+};
 
 export default Navbar;

@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
 import { GrChannel } from "react-icons/gr";
 
 import {
@@ -13,17 +12,17 @@ import {
   MdOutlineLanguage,
   MdOutlineLocationOn,
   MdOutlineNoEncryption,
-  MdManageAccounts
+  MdManageAccounts,
 } from "react-icons/md";
 import { TbHexagonLetterP } from "react-icons/tb";
 import { PiShoppingBagOpenLight } from "react-icons/pi";
 import { SiYoutubestudio } from "react-icons/si";
 
 function ProfileDropdown({ profileOpen, user, handleLogout }) {
-
   if (!profileOpen) return null;
+  console.log(user);
   
-
+  
 
   console.log(user);
   return (
@@ -37,11 +36,18 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
           className="w-12 h-12 rounded-full object-cover border-2 border-red-500"
         />
         <div>
-          <div className="font-semibold text-lg">{user.name || user?.name || "User"}</div>
+          <div className="font-semibold text-lg">
+            {user.name || user?.name || "User"}
+          </div>
+          <div className="text-gray-400 text-sm">@{user.id || "userId"}</div>
+
+
           <div className="text-gray-400 text-sm">
-            @{user.channelName || "channelName"}</div>
-             <div className="text-gray-400 text-sm">
-            @{user.id || "userId"}</div>
+            @{user.channelName || "channelName"}
+          </div>
+          
+
+          
           <Link
             to={`/user/${user.id || ""}`}
             className="text-blue-400 text-sm hover:underline"
@@ -53,7 +59,14 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
 
       <hr className="border-gray-700 my-2" />
 
-      <Link to={`/createchannel`}><MenuItem icon={<GrChannel />} label="Create Channel" /> </Link>
+      <Link to={`/createchannel`}>
+        <MenuItem icon={<GrChannel />} label="Create Channel" />{" "}
+      </Link>
+   
+<Link to={`/channel/${user.channelId}`}>
+    <MenuItem icon={<MdManageAccounts />} label="Manage Channel" />
+  </Link>
+
 
       <MenuItem icon={<MdLogout />} label="Sign out" onClick={handleLogout} />
       <MenuItem

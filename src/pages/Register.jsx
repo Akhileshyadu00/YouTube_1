@@ -29,19 +29,18 @@ function Registration() {
           return "Please enter a valid email.";
         break;
       case "password":
-  if (!value.trim()) return "Password is required.";
-  if (value.length < 8)
-    return "Password must be at least 8 characters.";
-  if (
-    !/(?=.*[a-z])/.test(value) ||
-    !/(?=.*[A-Z])/.test(value) ||
-    !/(?=.*\d)/.test(value) ||
-    !/(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(value)
-  ) {
-    return "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.";
-  }
-  break;
-
+        if (!value.trim()) return "Password is required.";
+        if (value.length < 8)
+          return "Password must be at least 8 characters.";
+        if (
+          !/(?=.*[a-z])/.test(value) ||
+          !/(?=.*[A-Z])/.test(value) ||
+          !/(?=.*\d)/.test(value) ||
+          !/(?=.*[@$!%*?&])/.test(value)
+        ) {
+          return "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.";
+        }
+        break;
       case "about":
         if (!value.trim()) return "About is required.";
         break;
@@ -140,7 +139,9 @@ function Registration() {
         "http://localhost:4001/api/users/register",
         userData
       );
-      toast.success(res.message,"Registration successful!", { toastId: "register-success" });
+      console.log(res);
+      
+      toast.success("Registration successful!", { toastId: "register-success" });
 
       // Reset form
       setFormData({
@@ -153,7 +154,7 @@ function Registration() {
       setPreviewImage(null);
 
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 1500); // small delay to show toast
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
@@ -219,6 +220,7 @@ function Registration() {
             value={formData.password}
             onChange={handleChange}
             required
+            autoComplete="new-password"
             className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
@@ -228,13 +230,13 @@ function Registration() {
           <label htmlFor="about" className="block mb-1">
             About
           </label>
-          <input
+          <textarea
             id="about"
-            type="text"
             name="about"
             value={formData.about}
             onChange={handleChange}
             required
+            rows={3}
             className="w-full p-2 rounded bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
         </div>
@@ -249,6 +251,7 @@ function Registration() {
             type="file"
             name="profileImage"
             accept="image/*"
+            aria-label="Profile Image"
             onChange={handleChange}
             className="w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
                        file:rounded file:border-0 file:text-sm file:font-semibold

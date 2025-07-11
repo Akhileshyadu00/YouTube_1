@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 function CreateChannel() {
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     channelName: "",
     description: "",
@@ -20,10 +22,14 @@ function CreateChannel() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:4001/api/channels", form, {
+      const res = await axios.post("http://localhost:4001/api/channels", form, {
         headers: { Authorization: `JWT ${token}` },
       });
+      console.log(res.data._id);
+      localStorage.setItem("channelId", res.data._id)
+      
       toast.success("✅ Channel created successfully!");
+      setTimeout(() => navigate("/"), 1500);
       setForm({ channelName: "", description: "", channelBanner: "" });
     } catch (err) {
       console.error(err);

@@ -6,11 +6,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
+
 function Profile({ sideNavbar,}) {
   const { id } = useParams();
   
   const [videos, setVideos] = useState([]);
   const [user, setUser] = useState(null);
+  const [channelId, setChannelId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Edit modal state
@@ -30,6 +32,7 @@ function Profile({ sideNavbar,}) {
     try {
       const res = await axios.get(`http://localhost:4001/api/users/${id}`);
       setUser(res.data.user || res.data.data || res.data);
+      setChannelId(res.data.channelId);
     } catch (err) {
       console.error("User fetch error:", err);
       setUser(null);
@@ -169,8 +172,8 @@ function Profile({ sideNavbar,}) {
         {/* Header */}
 
         <header className="mb-6 border-b border-gray-700 pb-4">
+          {/* Static Banner ----- (channel banner in manage channel page) */}
           
-
         </header>
 
         {/* Profile Info */}
