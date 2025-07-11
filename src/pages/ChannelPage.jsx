@@ -60,7 +60,7 @@ export default function ChannelPage({ sideNavbar }) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`http://localhost:4001/api/channels/${id}`, {
+      const res = await fetch(`https://yt-backend-thbd.onrender.com/api/channels/${id}`, {
         headers: { Authorization: `JWT ${token}` },
         withCredentials: true,
       });
@@ -87,7 +87,7 @@ export default function ChannelPage({ sideNavbar }) {
     setChannelFormLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:4001/api/channels/${channel._id}`,
+        `https://yt-backend-thbd.onrender.com/api/channels/${channel._id}`,
         {
           method: "PUT",
           headers: {
@@ -126,7 +126,7 @@ export default function ChannelPage({ sideNavbar }) {
   const handleDeleteChannel = async () => {
   if (!window.confirm("Are you sure you want to delete this channel? This action cannot be undone.")) return;
   try {
-    const res = await fetch(`http://localhost:4001/api/channels/${channel._id}`, {
+    const res = await fetch(`https://yt-backend-thbd.onrender.com/api/channels/${channel._id}`, {
       method: "DELETE",
       headers: {
         Authorization: `JWT ${token}`,

@@ -22,7 +22,7 @@ function CreateChannel() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:4001/api/channels", form, {
+      const res = await axios.post("https://yt-backend-thbd.onrender.com/api/channels", form, {
         headers: { Authorization: `JWT ${token}` },
       });
       console.log(res.data._id);

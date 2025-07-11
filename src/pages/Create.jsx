@@ -107,7 +107,7 @@ function Create() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:4001/api/videos",
+        "https://yt-backend-thbd.onrender.com/api/videos",
         payload,
         {
           headers: {
@@ -137,8 +137,8 @@ function Create() {
     <div className="bg-black text-white min-h-screen px-6 pt-20">
       <ToastContainer position="top-right" autoClose={4000} />
 
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-2xl font-bold">Upload Video</h1>
+      <div className="flex justify-evenly items-center mb-10">
+        <h1 className="text-2xl text-center font-bold">Upload Video Here</h1>
         <div className="flex gap-4 text-2xl">
           <MdOutlineFeedback className="cursor-pointer hover:text-gray-400" />
           <MdOutlineCancel

@@ -27,7 +27,7 @@ function Main({ fullNav }) {
     const fetchVideos = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:4001/api/videos");
+        const res = await axios.get("https://yt-backend-thbd.onrender.com/api/videos");
         setVideos(res.data?.videos || []);
         setError("");
       } catch (err) {

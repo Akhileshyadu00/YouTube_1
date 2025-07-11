@@ -52,7 +52,7 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
             to={`/user/${user.id || ""}`}
             className="text-blue-400 text-sm hover:underline"
           >
-            View your channel
+            View your Profile
           </Link>
         </div>
       </div>

@@ -37,7 +37,7 @@ function Navbar({ setSideNavbarfunc, sideNavbar }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:4001/api/users/logout");
+      await axios.post("https://yt-backend-thbd.onrender.com/api/users/logout");
       toast.success("Logout Successfully");
     } catch (err) {
       console.error("Logout failed:", err);

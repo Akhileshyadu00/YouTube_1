@@ -136,7 +136,7 @@ function Registration() {
 
     try {
       const res = await axios.post(
-        "http://localhost:4001/api/users/register",
+        "https://yt-backend-thbd.onrender.com/api/users/register",
         userData
       );
       console.log(res);

@@ -17,7 +17,7 @@ function Comments({ videoId, currentUserId, currentUserPic }) {
   const getCommentByVideoId = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4001/api/comments/${videoId}`
+        `https://yt-backend-thbd.onrender.com/api/comments/${videoId}`
       );
       setComments(response.data.comments);
     } catch (err) {
@@ -36,7 +36,7 @@ function Comments({ videoId, currentUserId, currentUserPic }) {
     }
     try {
       await axios.post(
-        `http://localhost:4001/api/comments`,
+        `https://yt-backend-thbd.onrender.com/api/comments`,
         { videoId, message: newComment },
         { headers: { Authorization: `JWT ${token}`, withCredentials: true } }
       );
@@ -45,6 +45,8 @@ function Comments({ videoId, currentUserId, currentUserPic }) {
       getCommentByVideoId();
       setTimeout(() => setCommentMessage(""), 2000);
     } catch (err) {
+      console.log(err);
+      
       setCommentMessage(
         err.response?.data?.message || "Failed to add comment."
       );
@@ -64,7 +66,7 @@ function Comments({ videoId, currentUserId, currentUserPic }) {
     if (!editingText.trim()) return;
     try {
       await axios.put(
-        `http://localhost:4001/api/comments/${commentId}`,
+        `https://yt-backend-thbd.onrender.com/api/comments/${commentId}`,
         { message: editingText },
         { headers: { Authorization: `JWT ${token}`, withCredentials: true } }
       );
@@ -85,7 +87,7 @@ function Comments({ videoId, currentUserId, currentUserPic }) {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
       await axios.delete(
-        `http://localhost:4001/api/comments/${commentId}`,
+        `https://yt-backend-thbd.onrender.com/api/comments/${commentId}`,
         { headers: { Authorization: `JWT ${token}`, withCredentials: true } }
       );
       getCommentByVideoId();

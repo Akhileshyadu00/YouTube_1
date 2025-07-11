@@ -21,7 +21,7 @@
         setLoading(true);
         setError("");
         const res = await fetch(
-          `http://localhost:4001/api/videos?search=${encodeURIComponent(trimmed)}`
+          `https://yt-backend-thbd.onrender.com/api/videos?search=${encodeURIComponent(trimmed)}`
         );
         
         if (!res.ok) throw new Error("Failed to fetch search results");

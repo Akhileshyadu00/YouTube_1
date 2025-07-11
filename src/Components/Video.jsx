@@ -27,7 +27,7 @@ function Video({ sideNavbar }) {
       setLoading(true);
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:4001/api/videos/${id}`,
+        `https://yt-backend-thbd.onrender.com/api/videos/${id}`,
         token
           ? { headers: { Authorization: `JWT ${token}` } }
           : undefined
@@ -63,7 +63,7 @@ function Video({ sideNavbar }) {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:4001/api/videos/${id}/like`,
+        `https://yt-backend-thbd.onrender.com/api/videos/${id}/like`,
         {},
         { headers: { Authorization: `JWT ${token}`, withCredentials: true } }
       );
@@ -89,7 +89,7 @@ function Video({ sideNavbar }) {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:4001/api/videos/${id}/dislike`,
+        `https://yt-backend-thbd.onrender.com/api/videos/${id}/dislike`,
         {},
         { headers: { Authorization: `JWT ${token}`, withCredentials: true } }
       );
@@ -160,7 +160,7 @@ function Video({ sideNavbar }) {
                 </Link>
                 <div className="text-white">
                   <h4 className="text-base font-semibold">
-                    {data.channel?.channelName || "Unknown"}
+                    {data.user?.userName || "Unknown"}
                   </h4>
                   <p className="text-sm text-gray-400">
                     {data.channel?.subscribers || 0} subscribers
@@ -185,7 +185,7 @@ function Video({ sideNavbar }) {
                 <button
                   className={`flex items-center gap-1 px-4 py-2 text-white rounded-full text-sm transition ${
                     userLikeStatus === "disliked"
-                      ? "bg-blue-700"
+                      ? "bg-red-700"
                       : "bg-gray-800 hover:bg-gray-700"
                   }`}
                   onClick={handleDislike}

@@ -5,11 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
-function Profile({ sideNavbar,}) {
+function Profile({ sideNavbar }) {
   const { id } = useParams();
-  
+
   const [videos, setVideos] = useState([]);
   const [user, setUser] = useState(null);
   const [channelId, setChannelId] = useState(null);
@@ -30,7 +28,7 @@ function Profile({ sideNavbar,}) {
   // Fetch user/channel info
   const fetchUserData = async () => {
     try {
-      const res = await axios.get(`http://localhost:4001/api/users/${id}`);
+      const res = await axios.get(`https://yt-backend-thbd.onrender.com/api/users/${id}`);
       setUser(res.data.user || res.data.data || res.data);
       setChannelId(res.data.channelId);
     } catch (err) {
@@ -45,7 +43,7 @@ function Profile({ sideNavbar,}) {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:4001/api/videos/user/${id}`,
+        `https://yt-backend-thbd.onrender.com/api/videos/user/${id}`,
         token
           ? {
               headers: { Authorization: `JWT ${token}` },
@@ -91,7 +89,6 @@ function Profile({ sideNavbar,}) {
     setShowEdit(true);
   };
 
-
   // Edit handler
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -99,7 +96,7 @@ function Profile({ sideNavbar,}) {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `http://localhost:4001/api/videos/${editVideo._id}`,
+        `https://yt-backend-thbd.onrender.com/api/videos/${editVideo._id}`,
         editForm,
         { headers: { Authorization: `JWT ${token}` } }
       );
@@ -119,7 +116,7 @@ function Profile({ sideNavbar,}) {
     if (!window.confirm("Are you sure you want to delete this video?")) return;
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:4001/api/videos/${videoId}`, {
+      await axios.delete(`https://yt-backend-thbd.onrender.com/api/videos/${videoId}`, {
         headers: { Authorization: `JWT ${token}` },
       });
       toast.success("Video deleted!"); // Now this will always show on success
@@ -172,8 +169,13 @@ function Profile({ sideNavbar,}) {
         {/* Header */}
 
         <header className="mb-6 border-b border-gray-700 pb-4">
-          {/* Static Banner ----- (channel banner in manage channel page) */}
-          
+          <div className="w-full h-48 rounded-lg overflow-hidden mb-4">
+            <img
+              src="https://wallpapers.com/images/high/avengers-infinity-war-desktop-ef71llox7g6q0r8z.webp"
+              alt="Channel Banner"
+              className="w-full h-full object-cover"
+            />
+          </div>
         </header>
 
         {/* Profile Info */}
