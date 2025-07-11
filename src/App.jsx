@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { AuthProvider } from "./context/AuthContext";
 import CreateChannel from "./Components/CreateChannel";
-import ChannelPage from "./pages/ChannelPage";
+import ChannelPage from "./Pages/ChannelPage";
 
 
 function App() {
@@ -37,8 +37,8 @@ function App() {
           {/* <Route path="/channel/:id" element={<Profile sideNavbar={sideNavbar} />} /> */}
 
            <Route path="/createchannel" element={<CreateChannel />} />
-           {/* <Route path="/users/:id" element={<ChannelPage />}></Route>
-         */}
+           <Route path="/channel/manage" element={<ChannelPage sideNavbar={true} />} />
+        
 
          {/* <Route path="/channel/:id/manage" element={<ManageVideos />} /> */}
 

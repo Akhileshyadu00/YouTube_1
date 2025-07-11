@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SideNavbar from "../Components/SideNavbar";
 import { Link, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Profile({ sideNavbar }) {
   const { id } = useParams();
@@ -10,7 +11,18 @@ function Profile({ sideNavbar }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
+  // Edit modal state
+  const [showEdit, setShowEdit] = useState(false);
+  const [editVideo, setEditVideo] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    thumbnail: "",
+    videoLink: "",
+    category: ""
+  });
+  const [editLoading, setEditLoading] = useState(false);
+
   // Fetch user/channel info
   const fetchUserData = async () => {
     try {
@@ -24,7 +36,6 @@ function Profile({ sideNavbar }) {
   };
 
   // Fetch videos for this user/channel
-  // In your Profile component
   const fetchVideos = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -59,16 +70,106 @@ function Profile({ sideNavbar }) {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line
   }, [id]);
 
-  console.log(user);
+  // Handle Edit
+  const handleEdit = (video) => {
+    setEditVideo(video);
+    setEditForm({
+      title: video.title || "",
+      description: video.description || "",
+      thumbnail: video.thumbnail || "",
+      videoLink: video.videoLink || "",
+      category: video.category || "",
+    });
+    setShowEdit(true);
+  };
+
+  // Handle Edit Form Submission
+  // const handleEditSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setEditLoading(true);
+  //   const token = localStorage.getItem("token");
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:4001/api/videos/${editVideo._id}`,
+  //       editForm,
+  //       { headers: { Authorization: `JWT ${token}` } }
+  //     );
+  //     toast.success("Video updated!");
+  //     setShowEdit(false);
+  //     setEditVideo(null);
+  //     await fetchVideos();
+  //   } catch (err) {
+  //     console.log(err);
+      
+  //     toast.error(err.response?.data?.message || "Failed to update video.");
+  //   } finally {
+  //     setEditLoading(false);
+  //   }
+  // };
+
+  // // Handle Delete
+  // const handleDelete = async (videoId) => {
+  //   if (!window.confirm("Are you sure you want to delete this video?")) return;
+  //   const token = localStorage.getItem("token");
+  //   try {
+  //     await axios.delete(
+  //       `http://localhost:4001/api/videos/${videoId}`,
+  //       { headers: { Authorization: `JWT ${token}` } }
+  //     );
+  //     toast.success("Video deleted!");
+  //     await fetchVideos();
+  //   } catch (err) {
+  //     toast.error(err.response?.data?.message || "Failed to delete video.");
+  //   }
+  // };
+
+
+  // Edit handler
+const handleEditSubmit = async (e) => {
+  e.preventDefault();
+  setEditLoading(true);
+  const token = localStorage.getItem("token");
+  try {
+    await axios.put(
+      `http://localhost:4001/api/videos/${editVideo._id}`,
+      editForm,
+      { headers: { Authorization: `JWT ${token}` } }
+    );
+    toast.success("Video updated!"); // Only this toast, not "login successful"
+    setShowEdit(false);
+    setEditVideo(null);
+    await fetchVideos();
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to update video.");
+  } finally {
+    setEditLoading(false);
+  }
+};
+
+// Delete handler
+const handleDelete = async (videoId) => {
+  if (!window.confirm("Are you sure you want to delete this video?")) return;
+  const token = localStorage.getItem("token");
+  try {
+    await axios.delete(
+      `http://localhost:4001/api/videos/${videoId}`,
+      { headers: { Authorization: `JWT ${token}` } }
+    );
+    toast.success("Video deleted!"); // Now this will always show on success
+    await fetchVideos();
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to delete video.");
+  }
+};
 
   // Loading State
   if (loading) {
     return (
       <div className="flex bg-black min-h-screen text-white">
         <SideNavbar isOpen={sideNavbar} />
-
         <main className="flex-1 flex items-center justify-center">
           <span className="text-xl">Loading...</span>
         </main>
@@ -81,7 +182,6 @@ function Profile({ sideNavbar }) {
     return (
       <div className="flex bg-black min-h-screen text-white">
         <SideNavbar isOpen={sideNavbar} />
-
         <main className="flex-1 flex flex-col items-center justify-center">
           <span className="text-xl text-red-500 mb-4">User not found.</span>
           <Link to="/" className="text-blue-400 underline">
@@ -96,6 +196,7 @@ function Profile({ sideNavbar }) {
   return (
     <div className="flex mt-10 bg-black min-h-screen text-white">
       {/* Sidebar */}
+      <ToastContainer position="bottom-right" />
       <SideNavbar isOpen={sideNavbar} />
 
       {/* Channel Banner */}
@@ -155,8 +256,11 @@ function Profile({ sideNavbar }) {
         ) : (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
             {videos.map((video) => (
-              <Link to={`/watch/${video._id}`} key={video._id}>
-                <div className="w-full sm:w-[280px] md:w-[300px] min-h-[260px] md:min-h-[300px] bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+              <div
+                key={video._id}
+                className="w-full sm:w-[280px] md:w-[300px] min-h-[260px] md:min-h-[300px] bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1"
+              >
+                <Link to={`/watch/${video._id}`}>
                   <div className="aspect-video">
                     <img
                       src={video.thumbnail}
@@ -173,9 +277,95 @@ function Profile({ sideNavbar }) {
                       {new Date(video.createdAt).toLocaleDateString()}
                     </p>
                   </div>
+                </Link>
+                {/* Edit/Delete Actions */}
+                <div className="flex justify-between items-center px-3 pb-2">
+                  <button
+                    className="text-blue-400 hover:underline text-xs mr-2"
+                    onClick={() => handleEdit(video)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="text-red-500 hover:underline text-xs"
+                    onClick={() => handleDelete(video._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
-              </Link>
+              </div>
             ))}
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEdit && (
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-900 p-6 rounded-lg w-full max-w-md">
+              <h2 className="text-xl font-bold text-white mb-4">Edit Video</h2>
+              <form onSubmit={handleEditSubmit}>
+                <input
+                  className="w-full mb-3 p-2 rounded"
+                  name="title"
+                  type="text"
+                  placeholder="Video title"
+                  value={editForm.title}
+                  onChange={e => setEditForm({ ...editForm, title: e.target.value })}
+                  required
+                />
+                <input
+                  className="w-full mb-3 p-2 rounded"
+                  name="videoLink"
+                  type="url"
+                  placeholder="Video file URL"
+                  value={editForm.videoLink}
+                  onChange={e => setEditForm({ ...editForm, videoLink: e.target.value })}
+                  required
+                />
+                <input
+                  className="w-full mb-3 p-2 rounded"
+                  name="thumbnail"
+                  type="url"
+                  placeholder="Thumbnail image URL"
+                  value={editForm.thumbnail}
+                  onChange={e => setEditForm({ ...editForm, thumbnail: e.target.value })}
+                  required
+                />
+                <textarea
+                  className="w-full mb-3 p-2 rounded"
+                  name="description"
+                  placeholder="Video description"
+                  value={editForm.description}
+                  onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                  rows={2}
+                />
+                <input
+                  className="w-full mb-3 p-2 rounded"
+                  name="category"
+                  type="text"
+                  placeholder="Category"
+                  value={editForm.category}
+                  onChange={e => setEditForm({ ...editForm, category: e.target.value })}
+                />
+                <div className="flex gap-2 justify-end">
+                  <button
+                    type="button"
+                    className="bg-gray-700 text-white px-4 py-2 rounded"
+                    onClick={() => setShowEdit(false)}
+                    disabled={editLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded"
+                    disabled={editLoading}
+                  >
+                    {editLoading ? "Saving..." : "Save"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </main>
