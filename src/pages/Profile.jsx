@@ -5,8 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function Profile({ sideNavbar }) {
+
+function Profile({ sideNavbar,}) {
   const { id } = useParams();
+  
   const [videos, setVideos] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -86,45 +88,6 @@ function Profile({ sideNavbar }) {
     setShowEdit(true);
   };
 
-  // Handle Edit Form Submission
-  // const handleEditSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setEditLoading(true);
-  //   const token = localStorage.getItem("token");
-  //   try {
-  //     await axios.put(
-  //       `http://localhost:4001/api/videos/${editVideo._id}`,
-  //       editForm,
-  //       { headers: { Authorization: `JWT ${token}` } }
-  //     );
-  //     toast.success("Video updated!");
-  //     setShowEdit(false);
-  //     setEditVideo(null);
-  //     await fetchVideos();
-  //   } catch (err) {
-  //     console.log(err);
-
-  //     toast.error(err.response?.data?.message || "Failed to update video.");
-  //   } finally {
-  //     setEditLoading(false);
-  //   }
-  // };
-
-  // // Handle Delete
-  // const handleDelete = async (videoId) => {
-  //   if (!window.confirm("Are you sure you want to delete this video?")) return;
-  //   const token = localStorage.getItem("token");
-  //   try {
-  //     await axios.delete(
-  //       `http://localhost:4001/api/videos/${videoId}`,
-  //       { headers: { Authorization: `JWT ${token}` } }
-  //     );
-  //     toast.success("Video deleted!");
-  //     await fetchVideos();
-  //   } catch (err) {
-  //     toast.error(err.response?.data?.message || "Failed to delete video.");
-  //   }
-  // };
 
   // Edit handler
   const handleEditSubmit = async (e) => {
@@ -197,17 +160,6 @@ function Profile({ sideNavbar }) {
       <ToastContainer position="bottom-right" />
       <SideNavbar isOpen={sideNavbar} />
 
-      {/* Channel Banner */}
-      {/* {user?.channelBanner && (
-        <div className="w-full mb-6">
-          <img
-            src={user.channelBanner}
-            alt="Channel Banner"
-            className="w-full h-48 sm:h-64 object-cover rounded-lg"
-          />
-        </div>
-      )} */}
-
       {/* Main Content */}
       <main
         className={`flex-1 transition-all duration-300 ${
@@ -215,37 +167,10 @@ function Profile({ sideNavbar }) {
         } p-4`}
       >
         {/* Header */}
-        {/* <header className="mb-6 border-b border-gray-700 pb-4">
-          <h1 className="text-2xl font-bold">
-            {user?.channelName || user?.userName || "Channel"}
-         
-          </h1>
-             {user?.channelBanner && (
-        <div className="w-full mb-6">
-          <img
-            src={user.channelBanner || "https://www.shutterstock.com/image-photo/server-support-management-technician-working-on-1912910116"}
-            alt="Channel Banner"
-            className="w-full h-48 sm:h-64 object-cover rounded-lg"
-          />
-        </div>
-      )}
-        </header> */}
 
         <header className="mb-6 border-b border-gray-700 pb-4">
-          <div className="w-full mb-6">
-            <img
-              src={
-                user?.channelBanner?.trim()
-                  ? user.channelBanner
-                  : "https://media.istockphoto.com/id/1427517220/photo/carbon-neutral-and-net-zero-concept-natural-environment-a-climate-neutral-long-term-strategy.jpg?s=612x612&w=0&k=20&c=H091tXnWfRST4Ai_B7LgnWhaT9v5LXxAB3IFglj7nLQ="
-              }
-              alt="Channel Banner"
-              className="w-full h-48 sm:h-64 object-cover rounded-lg"
-            />
-          </div>
-          <h1 className="text-2xl font-bold">
-            {user?.channelName || user?.userName || "Channel"}
-          </h1>
+          
+
         </header>
 
         {/* Profile Info */}
@@ -266,11 +191,10 @@ function Profile({ sideNavbar }) {
           </div>
         </section>
 
-             <div className="mb-4">
-  <h2 className="text-xl font-semibold text-white mb-1">Videos</h2>
-  <hr className="border-gray-600" />
-</div>
-       
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-white mb-1">Videos</h2>
+          <hr className="border-gray-600" />
+        </div>
 
         {/* Uploaded Videos */}
         {videos.length === 0 ? (

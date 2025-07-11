@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { GrChannel } from "react-icons/gr";
+
 import {
   MdOutlineSwitchAccount,
   MdLogout,
@@ -12,6 +13,7 @@ import {
   MdOutlineLanguage,
   MdOutlineLocationOn,
   MdOutlineNoEncryption,
+  MdManageAccounts
 } from "react-icons/md";
 import { TbHexagonLetterP } from "react-icons/tb";
 import { PiShoppingBagOpenLight } from "react-icons/pi";
@@ -20,6 +22,8 @@ import { SiYoutubestudio } from "react-icons/si";
 function ProfileDropdown({ profileOpen, user, handleLogout }) {
 
   if (!profileOpen) return null;
+  
+
 
   console.log(user);
   return (
@@ -50,6 +54,7 @@ function ProfileDropdown({ profileOpen, user, handleLogout }) {
       <hr className="border-gray-700 my-2" />
 
       <Link to={`/createchannel`}><MenuItem icon={<GrChannel />} label="Create Channel" /> </Link>
+
       <MenuItem icon={<MdLogout />} label="Sign out" onClick={handleLogout} />
       <MenuItem
         icon={<MdOutlineSwitchAccount />}

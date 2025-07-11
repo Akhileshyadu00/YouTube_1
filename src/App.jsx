@@ -15,37 +15,39 @@ import { AuthProvider } from "./context/AuthContext";
 import CreateChannel from "./Components/CreateChannel";
 import ChannelPage from "./Pages/ChannelPage";
 
-
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
 
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Navbar
-          setSideNavbarfunc={setSideNavbar}
-          sideNavbar={sideNavbar}
-        />
+        <Navbar setSideNavbarfunc={setSideNavbar} sideNavbar={sideNavbar} />
 
         <Routes>
           <Route path="/" element={<Home sideNavbar={sideNavbar} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
-          <Route path="/watch/:id" element={<Video sideNavbar={sideNavbar}/>} />
+          <Route path="/watch/:id" element={<Video sideNavbar={sideNavbar} />} />
           <Route path="/user/:id/create" element={<Create />} />
           <Route path="/user/:id" element={<Profile sideNavbar={sideNavbar} />} />
-          {/* <Route path="/channel/:id" element={<Profile sideNavbar={sideNavbar} />} /> */}
-
-           <Route path="/createchannel" element={<CreateChannel />} />
-           <Route path="/channel" element={<ChannelPage sideNavbar={true} />} />
-        
-
-         {/* <Route path="/channel/:id/manage" element={<ManageVideos />} /> */}
-
+          <Route path="/createchannel" element={<CreateChannel />} />
+          <Route path="/channel/:id" element={<ChannelPage sideNavbar={sideNavbar} />} />
         </Routes>
 
         {/* Global toast container for all pages */}
-        <ToastContainer position="bottom-right" />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          limit={1}
+          pauseOnFocusLoss={false}
+          pauseOnVisibilityChange={false}
+          draggable
+          pauseOnHover
+        />
       </AuthProvider>
     </BrowserRouter>
   );

@@ -8,26 +8,32 @@ export const AuthProvider = ({ children }) => {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [channelName, setChannelName] = useState("");
+  const [token, setToken] = useState(""); 
 
   // Restore auth state from localStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("token");
     const storedPic = localStorage.getItem("userProfilePic");
     const storedUserId = localStorage.getItem("userId");
     const storedUserName = localStorage.getItem("userName");
     const storedChannelName = localStorage.getItem("channelName");
 
-    if (token && storedUserId) {
+    // FIX: use storedToken, not token state here!
+    if (storedToken && storedUserId) {
       setIsLoggedIn(true);
       setUserId(storedUserId);
       setUserPic(storedPic || "");
       setUserName(storedUserName || "");
       setChannelName(storedChannelName || "");
+      setToken(storedToken); 
     }
   }, []);
 
   const login = (profilePic, token, userId, userName, channelName) => {
-    if (token) localStorage.setItem("token", token);
+    if (token) {
+      localStorage.setItem("token", token);
+      setToken(token);
+    }
     if (userId) {
       localStorage.setItem("userId", userId);
       setUserId(userId);
@@ -58,6 +64,7 @@ export const AuthProvider = ({ children }) => {
     setUserId("");
     setUserName("");
     setChannelName("");
+    setToken(""); 
   };
 
   return (
@@ -68,6 +75,7 @@ export const AuthProvider = ({ children }) => {
         userId,
         userName,
         channelName,
+        token, 
         login,
         logout,
       }}

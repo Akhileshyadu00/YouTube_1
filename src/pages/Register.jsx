@@ -17,19 +17,63 @@ function Registration() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Real-time validation (returns error string or "")
+  const validateField = (name, value) => {
+    switch (name) {
+      case "userName":
+        if (!value.trim()) return "Username is required.";
+        break;
+      case "email":
+        if (!value.trim()) return "Email is required.";
+        if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value))
+          return "Please enter a valid email.";
+        break;
+      case "password":
+  if (!value.trim()) return "Password is required.";
+  if (value.length < 8)
+    return "Password must be at least 8 characters.";
+  if (
+    !/(?=.*[a-z])/.test(value) ||
+    !/(?=.*[A-Z])/.test(value) ||
+    !/(?=.*\d)/.test(value) ||
+    !/(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(value)
+  ) {
+    return "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.";
+  }
+  break;
+
+      case "about":
+        if (!value.trim()) return "About is required.";
+        break;
+      case "profileImage":
+        if (value && value.size > 2 * 1024 * 1024)
+          return "Profile image must be under 2MB.";
+        if (
+          value &&
+          !["image/jpeg", "image/png", "image/webp", "image/jpg"].includes(
+            value.type
+          )
+        )
+          return "Profile image must be JPG, PNG, or WEBP.";
+        break;
+      default:
+        return "";
+    }
+    return "";
+  };
+
+  // Only show toast for file input errors (not for every keystroke)
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "profileImage") {
       const file = files[0];
-
-      if (file && file.size > 2 * 1024 * 1024) {
-        toast.error("Profile image must be under 2MB.");
+      const error = validateField(name, file);
+      if (error) {
+        toast.error(error, { toastId: "profileImage" });
         return;
       }
-
       setFormData((prev) => ({ ...prev, profileImage: file }));
-
       if (file) {
         const previewUrl = URL.createObjectURL(file);
         setPreviewImage(previewUrl);
@@ -50,17 +94,13 @@ function Registration() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
-    const { userName, email, password,  about } = formData;
-
-    if (!userName || !email || !password || !about) {
-      toast.error("All fields are required.");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters.");
-      return;
+    // Validate all fields before submitting
+    for (const [key, value] of Object.entries(formData)) {
+      const error = validateField(key, value);
+      if (error) {
+        toast.error(error, { toastId: key }); // Use toastId to avoid duplicates
+        return;
+      }
     }
 
     setLoading(true);
@@ -80,8 +120,7 @@ function Registration() {
         );
         imageUrl = uploadResponse.data.secure_url;
       } catch (err) {
-        console.error("Image upload failed:", err);
-        toast.error("Failed to upload profile image.");
+        toast.error(err.message,"Failed to upload profile image.", { toastId: "cloudinary" });
         setLoading(false);
         return;
       }
@@ -89,12 +128,11 @@ function Registration() {
 
     // 2. Prepare and send user data to backend
     const userData = {
-      userName,
-      email,
-      password,
-    
+      userName: formData.userName,
+      email: formData.email,
+      password: formData.password,
       profilePic: imageUrl,
-      about,
+      about: formData.about,
     };
 
     try {
@@ -102,16 +140,13 @@ function Registration() {
         "http://localhost:4001/api/users/register",
         userData
       );
-
-      console.log("Registration response:", res.data);
-      toast.success("Registration successful!");
+      toast.success(res.message,"Registration successful!", { toastId: "register-success" });
 
       // Reset form
       setFormData({
         userName: "",
         email: "",
         password: "",
-        
         about: "",
         profileImage: null,
       });
@@ -121,8 +156,11 @@ function Registration() {
         navigate("/");
       }, 1500); // small delay to show toast
     } catch (err) {
-      console.error("User registration failed:", err);
-      toast.error("Registration failed. Please try again.");
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message, { toastId: "register-fail" });
+      } else {
+        toast.error("Registration failed. Please try again.", { toastId: "register-fail" });
+      }
     } finally {
       setLoading(false);
     }
@@ -185,7 +223,6 @@ function Registration() {
           />
         </div>
 
-
         {/* About */}
         <div className="mb-4">
           <label htmlFor="about" className="block mb-1">
@@ -235,8 +272,7 @@ function Registration() {
           {loading ? "Registering..." : "Register"}
         </button>
       </form>
-
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="bottom-right" limit={1} pauseOnFocusLoss={false} pauseOnVisibilityChange={false} />
     </div>
   );
 }
