@@ -19,7 +19,7 @@ function Profile({ sideNavbar }) {
     description: "",
     thumbnail: "",
     videoLink: "",
-    category: ""
+    category: "",
   });
   const [editLoading, setEditLoading] = useState(false);
 
@@ -103,7 +103,7 @@ function Profile({ sideNavbar }) {
   //     await fetchVideos();
   //   } catch (err) {
   //     console.log(err);
-      
+
   //     toast.error(err.response?.data?.message || "Failed to update video.");
   //   } finally {
   //     setEditLoading(false);
@@ -126,44 +126,42 @@ function Profile({ sideNavbar }) {
   //   }
   // };
 
-
   // Edit handler
-const handleEditSubmit = async (e) => {
-  e.preventDefault();
-  setEditLoading(true);
-  const token = localStorage.getItem("token");
-  try {
-    await axios.put(
-      `http://localhost:4001/api/videos/${editVideo._id}`,
-      editForm,
-      { headers: { Authorization: `JWT ${token}` } }
-    );
-    toast.success("Video updated!"); // Only this toast, not "login successful"
-    setShowEdit(false);
-    setEditVideo(null);
-    await fetchVideos();
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to update video.");
-  } finally {
-    setEditLoading(false);
-  }
-};
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setEditLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      await axios.put(
+        `http://localhost:4001/api/videos/${editVideo._id}`,
+        editForm,
+        { headers: { Authorization: `JWT ${token}` } }
+      );
+      toast.success("Video updated!"); // Only this toast, not "login successful"
+      setShowEdit(false);
+      setEditVideo(null);
+      await fetchVideos();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update video.");
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
-// Delete handler
-const handleDelete = async (videoId) => {
-  if (!window.confirm("Are you sure you want to delete this video?")) return;
-  const token = localStorage.getItem("token");
-  try {
-    await axios.delete(
-      `http://localhost:4001/api/videos/${videoId}`,
-      { headers: { Authorization: `JWT ${token}` } }
-    );
-    toast.success("Video deleted!"); // Now this will always show on success
-    await fetchVideos();
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to delete video.");
-  }
-};
+  // Delete handler
+  const handleDelete = async (videoId) => {
+    if (!window.confirm("Are you sure you want to delete this video?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      await axios.delete(`http://localhost:4001/api/videos/${videoId}`, {
+        headers: { Authorization: `JWT ${token}` },
+      });
+      toast.success("Video deleted!"); // Now this will always show on success
+      await fetchVideos();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete video.");
+    }
+  };
 
   // Loading State
   if (loading) {
@@ -200,7 +198,7 @@ const handleDelete = async (videoId) => {
       <SideNavbar isOpen={sideNavbar} />
 
       {/* Channel Banner */}
-      {user?.channelBanner && (
+      {/* {user?.channelBanner && (
         <div className="w-full mb-6">
           <img
             src={user.channelBanner}
@@ -208,16 +206,7 @@ const handleDelete = async (videoId) => {
             className="w-full h-48 sm:h-64 object-cover rounded-lg"
           />
         </div>
-      )}
-
-      <div className="flex justify-end mb-4">
-        <Link
-          to={`/channel/${user._id}/edit`}
-          className="text-blue-400 hover:underline"
-        >
-          Edit Channel
-        </Link>
-      </div>
+      )} */}
 
       {/* Main Content */}
       <main
@@ -226,7 +215,34 @@ const handleDelete = async (videoId) => {
         } p-4`}
       >
         {/* Header */}
+        {/* <header className="mb-6 border-b border-gray-700 pb-4">
+          <h1 className="text-2xl font-bold">
+            {user?.channelName || user?.userName || "Channel"}
+         
+          </h1>
+             {user?.channelBanner && (
+        <div className="w-full mb-6">
+          <img
+            src={user.channelBanner || "https://www.shutterstock.com/image-photo/server-support-management-technician-working-on-1912910116"}
+            alt="Channel Banner"
+            className="w-full h-48 sm:h-64 object-cover rounded-lg"
+          />
+        </div>
+      )}
+        </header> */}
+
         <header className="mb-6 border-b border-gray-700 pb-4">
+          <div className="w-full mb-6">
+            <img
+              src={
+                user?.channelBanner?.trim()
+                  ? user.channelBanner
+                  : "https://media.istockphoto.com/id/1427517220/photo/carbon-neutral-and-net-zero-concept-natural-environment-a-climate-neutral-long-term-strategy.jpg?s=612x612&w=0&k=20&c=H091tXnWfRST4Ai_B7LgnWhaT9v5LXxAB3IFglj7nLQ="
+              }
+              alt="Channel Banner"
+              className="w-full h-48 sm:h-64 object-cover rounded-lg"
+            />
+          </div>
           <h1 className="text-2xl font-bold">
             {user?.channelName || user?.userName || "Channel"}
           </h1>
@@ -249,6 +265,12 @@ const handleDelete = async (videoId) => {
             </h3>
           </div>
         </section>
+
+             <div className="mb-4">
+  <h2 className="text-xl font-semibold text-white mb-1">Videos</h2>
+  <hr className="border-gray-600" />
+</div>
+       
 
         {/* Uploaded Videos */}
         {videos.length === 0 ? (
@@ -310,7 +332,9 @@ const handleDelete = async (videoId) => {
                   type="text"
                   placeholder="Video title"
                   value={editForm.title}
-                  onChange={e => setEditForm({ ...editForm, title: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, title: e.target.value })
+                  }
                   required
                 />
                 <input
@@ -319,7 +343,9 @@ const handleDelete = async (videoId) => {
                   type="url"
                   placeholder="Video file URL"
                   value={editForm.videoLink}
-                  onChange={e => setEditForm({ ...editForm, videoLink: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, videoLink: e.target.value })
+                  }
                   required
                 />
                 <input
@@ -328,7 +354,9 @@ const handleDelete = async (videoId) => {
                   type="url"
                   placeholder="Thumbnail image URL"
                   value={editForm.thumbnail}
-                  onChange={e => setEditForm({ ...editForm, thumbnail: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, thumbnail: e.target.value })
+                  }
                   required
                 />
                 <textarea
@@ -336,7 +364,9 @@ const handleDelete = async (videoId) => {
                   name="description"
                   placeholder="Video description"
                   value={editForm.description}
-                  onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
                   rows={2}
                 />
                 <input
@@ -345,7 +375,9 @@ const handleDelete = async (videoId) => {
                   type="text"
                   placeholder="Category"
                   value={editForm.category}
-                  onChange={e => setEditForm({ ...editForm, category: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, category: e.target.value })
+                  }
                 />
                 <div className="flex gap-2 justify-end">
                   <button

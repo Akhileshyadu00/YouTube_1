@@ -37,7 +37,7 @@ function App() {
           {/* <Route path="/channel/:id" element={<Profile sideNavbar={sideNavbar} />} /> */}
 
            <Route path="/createchannel" element={<CreateChannel />} />
-           <Route path="/channel/manage" element={<ChannelPage sideNavbar={true} />} />
+           <Route path="/channel" element={<ChannelPage sideNavbar={true} />} />
         
 
          {/* <Route path="/channel/:id/manage" element={<ManageVideos />} /> */}
