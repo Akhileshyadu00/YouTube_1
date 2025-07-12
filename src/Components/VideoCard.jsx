@@ -35,9 +35,9 @@ const VideoCard = ({ video }) => {
           <h2 className="font-semibold text-sm line-clamp-2">
             {video.title || "Untitled Video"}
           </h2>
-          <p className="text-gray-400 text-sm">
+          {/* <p className="text-gray-400 text-sm">
             {video.user?.channelName || "Unknown Channel"}
-          </p>
+          </p> */}
           <p className="text-gray-500 text-xs">
             {video.views ?? 0} views •{" "}
             {new Date(video.createdAt).toLocaleDateString()}
